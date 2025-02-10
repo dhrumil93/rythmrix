@@ -1,7 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import BottomNav from '../../components/shared/BottomNav';
+import { ROUTES } from '../../navigation/routes';
+import LogoutDialog from '../../components/shared/LogoutDialog';
 
 const MENU_ITEMS = {
   profile: {
@@ -44,12 +47,59 @@ const MENU_ITEMS = {
 };
 
 export default function SettingsScreen() {
+  const router = useRouter();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  const handleMenuPress = (id) => {
+    switch(id) {
+      case 'plan':
+        router.push(ROUTES.SETTINGS_ROUTES.PLAN);
+        break;
+      case 'members':
+        router.push(ROUTES.SETTINGS_ROUTES.MEMBERS);
+        break;
+      case 'language':
+        router.push(ROUTES.SETTINGS_ROUTES.LANGUAGE);
+        break;
+      case 'subscription':
+        router.push(ROUTES.SETTINGS_ROUTES.SUBSCRIPTION);
+        break;
+      case 'support':
+        router.push(ROUTES.SETTINGS_ROUTES.SUPPORT);
+        break;
+      case 'ui':
+        router.push(ROUTES.SETTINGS_ROUTES.UI_MODE);
+        break;
+      case 'ecg':
+        router.push(ROUTES.SETTINGS_ROUTES.ECG_SETTINGS);
+        break;
+      case 'privacy':
+        router.push(ROUTES.SETTINGS_ROUTES.PRIVACY);
+        break;
+      case 'terms':
+        router.push(ROUTES.SETTINGS_ROUTES.TERMS);
+        break;
+    }
+  };
+
+  const handleEditProfile = () => {
+    router.push(ROUTES.SETTINGS_ROUTES.PROFILE);
+  };
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    setShowLogoutDialog(false);
+    // After logout, redirect to login screen
+    router.replace(ROUTES.AUTH.LOGIN);
+  };
+
   const renderMenuItem = (item) => {
     if (item.type === 'plan') {
       return (
         <TouchableOpacity 
           key={item.id}
           style={[styles.menuItem, styles.planItem]}
+          onPress={() => handleMenuPress(item.id)}
         >
           <View>
             <Text style={styles.planSubtitle}>{item.subtitle}</Text>
@@ -64,6 +114,7 @@ export default function SettingsScreen() {
       <TouchableOpacity 
         key={item.id}
         style={styles.menuItem}
+        onPress={() => handleMenuPress(item.id)}
       >
         <Text style={styles.menuItemText}>{item.title}</Text>
         {item.value ? (
@@ -83,35 +134,52 @@ export default function SettingsScreen() {
         <Text style={styles.title}>Settings</Text>
       </View>
 
-      <View style={styles.profileSection}>
-        <Image 
-          source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=rekha' }}
-          style={styles.avatar}
-        />
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>rekha</Text>
-          <Text style={styles.profilePhone}>+911234567890</Text>
-        </View>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.editButtonText}>Edit</Text>
-        </TouchableOpacity>
-      </View>
-
-      {Object.entries(MENU_ITEMS).map(([key, section]) => (
-        <View key={key} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-          <View style={styles.sectionContent}>
-            {section.items.map(renderMenuItem)}
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.profileSection}>
+          <Image 
+            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=rekha' }}
+            style={styles.avatar}
+          />
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>rekha</Text>
+            <Text style={styles.profilePhone}>+911234567890</Text>
           </View>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={handleEditProfile}
+          >
+            <Text style={styles.editButtonText}>Edit</Text>
+          </TouchableOpacity>
         </View>
-      ))}
 
-      <TouchableOpacity style={styles.logoutButton}>
-        <MaterialIcons name="logout" size={24} color="#ff3b30" />
-        <Text style={styles.logoutText}>Log Out</Text>
-      </TouchableOpacity>
+        {Object.entries(MENU_ITEMS).map(([key, section]) => (
+          <View key={key} style={styles.section}>
+            <Text style={styles.sectionTitle}>{section.title}</Text>
+            <View style={styles.sectionContent}>
+              {section.items.map(renderMenuItem)}
+            </View>
+          </View>
+        ))}
+
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={() => setShowLogoutDialog(true)}
+        >
+          <MaterialIcons name="logout" size={24} color="#ff3b30" />
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
+      </ScrollView>
 
       <BottomNav />
+
+      <LogoutDialog 
+        visible={showLogoutDialog}
+        onClose={() => setShowLogoutDialog(false)}
+        onLogout={handleLogout}
+      />
     </SafeAreaView>
   );
 }
@@ -221,12 +289,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingVertical: 16,
     marginTop: 'auto',
-    marginBottom: 80,
   },
   logoutText: {
     color: '#ff3b30',
     fontSize: 16,
     fontWeight: '500',
     marginLeft: 8,
+  },
+  scrollContent: {
+    paddingBottom: 80,
   },
 }); 

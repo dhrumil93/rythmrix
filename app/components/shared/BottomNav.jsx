@@ -39,7 +39,8 @@ export default function BottomNav() {
     if (route === ROUTES.HOME) {
       return pathname === ROUTES.HOME || pathname === '/(app)';
     }
-    return pathname.startsWith(route);
+    // Check if the current path includes the route path
+    return pathname.includes(route.split('/')[2]); // This will match 'reports' in '/(app)/reports/something'
   };
 
   return (
@@ -47,18 +48,18 @@ export default function BottomNav() {
       {NAV_ITEMS.map((item) => {
         const isActive = isRouteActive(item.route);
         return (
-          <TouchableOpacity 
+          <TouchableOpacity
             key={item.name}
             style={[styles.navItem, isActive && styles.activeNavItem]}
             onPress={() => router.push(item.route)}
           >
-            <MaterialIcons 
-              name={item.icon} 
-              size={20}
-              color={isActive ? '#074799' : '#666'} 
+            <MaterialIcons
+              name={item.icon}
+              size={24}
+              color={isActive ? '#074799' : '#666'}
             />
             <Text style={[
-              styles.navText, 
+              styles.navText,
               isActive && styles.activeNavText
             ]}>
               {item.label}

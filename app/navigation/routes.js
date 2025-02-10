@@ -22,4 +22,21 @@ export const ROUTES = {
     LEAD_TWO_ECG_REPORT: (id) => `/(app)/tests/lead2-ecg/reports/${id}`,
     HYPERKALEMIA_REPORT: (id) => `/(app)/tests/hyperkalemia/reports/${id}`,
   },
+  AUTH: {
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+  },
+  SETTINGS_ROUTES: {
+    PROFILE: '/(app)/settings/profile',
+    PLAN: '/(app)/settings/plan',
+    MEMBERS: '/(app)/settings/members',
+    LANGUAGE: '/(app)/settings/language',
+    SUBSCRIPTION: '/(app)/settings/subscription',
+    SUPPORT: '/(app)/settings/support',
+    UI_MODE: '/(app)/settings/ui-mode',
+    ECG_SETTINGS: '/(app)/settings/ecg-settings',
+    PRIVACY: '/(app)/settings/privacy',
+    TERMS: '/(app)/settings/terms',
+  },
 }; 
