@@ -4,6 +4,7 @@ export const ROUTES = {
   ARTICLES: '/(app)/articles',
   SETTINGS: '/(app)/settings',
   TESTS: {
+    INDEX: '/(app)/tests',
     TWELVE_LEAD_ECG: '/(app)/tests/12l-ecg',
     HEART_RISK: '/(app)/tests/heart-risk',
     HRV: '/(app)/tests/hrv',

@@ -87,10 +87,9 @@ export default function SettingsScreen() {
   };
 
   const handleLogout = () => {
-    // Implement logout logic here
     setShowLogoutDialog(false);
-    // After logout, redirect to login screen
-    router.replace(ROUTES.AUTH.LOGIN);
+    // Use replace instead of push to prevent going back to the app
+    router.replace('/auth/login');
   };
 
   const renderMenuItem = (item) => {

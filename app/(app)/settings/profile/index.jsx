@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import CustomInput from '../../../components/CustomInput';
@@ -30,80 +30,96 @@ export default function EditProfileScreen() {
         <Text style={styles.title}>Edit Profile</Text>
       </View>
 
-      <View style={styles.profileImageSection}>
-        <Image 
-          source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=rekha' }}
-          style={styles.avatar}
-        />
-        <TouchableOpacity style={styles.cameraButton}>
-          <MaterialIcons name="camera-alt" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.form}>
-        <CustomInput
-          label="Full Name"
-          value={formData.fullName}
-          onChangeText={(text) => setFormData({...formData, fullName: text})}
-          required
-        />
-        <CustomInput
-          label="Phone Number"
-          value={formData.phone}
-          onChangeText={(text) => setFormData({...formData, phone: text})}
-          keyboardType="phone-pad"
-        />
-        <CustomInput
-          label="Email Address"
-          value={formData.email}
-          onChangeText={(text) => setFormData({...formData, email: text})}
-          keyboardType="email-address"
-        />
-        
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
-            <CustomInput
-              label="Age"
-              value={formData.age}
-              onChangeText={(text) => setFormData({...formData, age: text})}
-              keyboardType="numeric"
-              suffix="yr(s)"
-              required
-            />
-          </View>
-          <View style={styles.halfInput}>
-            <CustomInput
-              label="Gender"
-              value={formData.gender}
-              onChangeText={(text) => setFormData({...formData, gender: text})}
-              required
-            />
-          </View>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.profileImageSection}>
+          <Image 
+            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=rekha' }}
+            style={styles.avatar}
+          />
+          <TouchableOpacity style={styles.cameraButton}>
+            <MaterialIcons name="camera-alt" size={20} color="#fff" />
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <MaterialIcons name="person" size={24} color="#666" />
             <CustomInput
-              label="Weight"
-              value={formData.weight}
-              onChangeText={(text) => setFormData({...formData, weight: text})}
-              keyboardType="numeric"
-              suffix="kg(s)"
+              label="Full Name"
+              value={formData.fullName}
+              onChangeText={(text) => setFormData({...formData, fullName: text})}
               required
             />
           </View>
-          <View style={styles.halfInput}>
+
+          <View style={styles.inputContainer}>
+            <MaterialIcons name="phone" size={24} color="#666" />
             <CustomInput
-              label="Height"
-              value={formData.height}
-              onChangeText={(text) => setFormData({...formData, height: text})}
-              keyboardType="numeric"
-              suffix="cm(s)"
-              required
+              label="Phone Number"
+              value={formData.phone}
+              onChangeText={(text) => setFormData({...formData, phone: text})}
+              keyboardType="phone-pad"
             />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <MaterialIcons name="email" size={24} color="#666" />
+            <CustomInput
+              label="Email Address"
+              value={formData.email}
+              onChangeText={(text) => setFormData({...formData, email: text})}
+              keyboardType="email-address"
+            />
+          </View>
+          
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Age"
+                value={formData.age}
+                onChangeText={(text) => setFormData({...formData, age: text})}
+                keyboardType="numeric"
+                suffix="yr(s)"
+                required
+              />
+            </View>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Gender"
+                value={formData.gender}
+                onChangeText={(text) => setFormData({...formData, gender: text})}
+                required
+              />
+            </View>
+          </View>
+
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Weight"
+                value={formData.weight}
+                onChangeText={(text) => setFormData({...formData, weight: text})}
+                keyboardType="numeric"
+                suffix="kg(s)"
+                required
+              />
+            </View>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Height"
+                value={formData.height}
+                onChangeText={(text) => setFormData({...formData, height: text})}
+                keyboardType="numeric"
+                suffix="cm(s)"
+                required
+              />
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       <TouchableOpacity style={styles.saveButton}>
         <Text style={styles.saveButtonText}>Save Changes</Text>
@@ -174,5 +190,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 100,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
   },
 }); 

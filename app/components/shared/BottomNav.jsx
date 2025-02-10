@@ -37,10 +37,11 @@ export default function BottomNav() {
 
   const isRouteActive = (route) => {
     if (route === ROUTES.HOME) {
-      return pathname === ROUTES.HOME || pathname === '/(app)';
+      // Check if it's home route or root path or empty path
+      return pathname === ROUTES.HOME || pathname === '/(app)' || pathname === '/';
     }
     // Check if the current path includes the route path
-    return pathname.includes(route.split('/')[2]); // This will match 'reports' in '/(app)/reports/something'
+    return pathname.includes(route.split('/')[2]);
   };
 
   return (

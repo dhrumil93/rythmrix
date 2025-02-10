@@ -7,6 +7,7 @@ export default function AppLayout() {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="index" />
       <Stack.Screen name="home" />
       <Stack.Screen name="reports" />
       <Stack.Screen name="articles" />
