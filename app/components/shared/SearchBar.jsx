@@ -31,17 +31,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     borderRadius: 12,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 4,
-    marginRight: 12,
+    marginRight: 2,
   },
   input: {
     flex: 1,
     marginLeft: 2,
     fontSize: 14,
     color: '#333',
-  },
-  menuIcon: {
-    padding: 10,
-  },
+  }
 }); 

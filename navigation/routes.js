@@ -1,4 +1,5 @@
 export const ROUTES = {
+  AUTH: '/(auth)',
   HOME: '/(app)/home',
   REPORTS: '/(app)/reports',
   ARTICLES: '/(app)/articles',
@@ -22,11 +23,6 @@ export const ROUTES = {
     LIVE_MONITOR_REPORT: (id) => `/(app)/tests/live-monitor/reports/${id}`,
     LEAD_TWO_ECG_REPORT: (id) => `/(app)/tests/lead2-ecg/reports/${id}`,
     HYPERKALEMIA_REPORT: (id) => `/(app)/tests/hyperkalemia/reports/${id}`,
-  },
-  AUTH: {
-    INDEX: '/(auth)/index',
-    // REGISTER: '/(auth)/index',
-    FORGOT_PASSWORD: '/(auth)/forgot-password',
   },
   SETTINGS_ROUTES: {
     PROFILE: '/(app)/settings/profile',

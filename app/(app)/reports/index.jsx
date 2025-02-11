@@ -1,23 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
-import SearchBar from '../../components/shared/SearchBar';
-import ReportBanner from './components/ReportBanner';
-import ReportsList from './components/ReportsList';
-import BottomNav from '../../components/shared/BottomNav';
+import React from "react";
+import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import SearchBar from "../../components/shared/SearchBar";
+import ReportBanner from "./components/ReportBanner";
+import ReportsList from "./components/ReportsList";
+import BottomNav from "../../components/shared/BottomNav";
 
 export default function ReportsScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-      
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+
       <View style={styles.header}>
         <Text style={styles.title}>My Reports</Text>
       </View>
 
       <View style={styles.searchContainer}>
-        <SearchBar 
-          placeholder="Search report by users etc"
-        />
+        <SearchBar placeholder="Search report by users etc" />
       </View>
 
       <View style={styles.content}>
@@ -34,7 +36,7 @@ export default function ReportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingTop: StatusBar.currentHeight || 40,
   },
   header: {
@@ -43,11 +45,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   searchContainer: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 2,
     marginBottom: 16,
   },
   content: {
@@ -56,8 +58,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
-    color: '#333',
+    color: "#333",
   },
-}); 
+});

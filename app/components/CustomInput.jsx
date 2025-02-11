@@ -46,7 +46,7 @@ export default function CustomInput({
 const styles = StyleSheet.create({
   inputGroup: {
     width: '100%',
-    marginBottom: 2,
+    marginBottom: 8,
   },
   label: {
     marginBottom: 8,
