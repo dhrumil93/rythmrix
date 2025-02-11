@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+// import Toast from 'react-native-toast-message';
+
 
 const { width } = Dimensions.get('window');
 

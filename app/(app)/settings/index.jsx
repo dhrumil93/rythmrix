@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Imag
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import BottomNav from '../../components/shared/BottomNav';
-import { ROUTES } from '../../navigation/routes';
+import { ROUTES } from '../../../navigation/routes';
 import LogoutDialog from '../../components/shared/LogoutDialog';
 
 const MENU_ITEMS = {
@@ -53,43 +53,42 @@ export default function SettingsScreen() {
   const handleMenuPress = (id) => {
     switch(id) {
       case 'plan':
-        router.push(ROUTES.SETTINGS_ROUTES.PLAN);
+        router.push('/(app)/settings/plan');
         break;
       case 'members':
-        router.push(ROUTES.SETTINGS_ROUTES.MEMBERS);
+        router.push('/(app)/settings/members');
         break;
       case 'language':
-        router.push(ROUTES.SETTINGS_ROUTES.LANGUAGE);
+        router.push('/(app)/settings/language');
         break;
       case 'subscription':
-        router.push(ROUTES.SETTINGS_ROUTES.SUBSCRIPTION);
+        router.push('/(app)/settings/subscription');
         break;
       case 'support':
-        router.push(ROUTES.SETTINGS_ROUTES.SUPPORT);
+        router.push('/(app)/settings/support');
         break;
       case 'ui':
-        router.push(ROUTES.SETTINGS_ROUTES.UI_MODE);
+        router.push('/(app)/settings/ui-mode');
         break;
       case 'ecg':
-        router.push(ROUTES.SETTINGS_ROUTES.ECG_SETTINGS);
+        router.push('/(app)/settings/ecg-settings');
         break;
       case 'privacy':
-        router.push(ROUTES.SETTINGS_ROUTES.PRIVACY);
+        router.push('/(app)/settings/privacy');
         break;
       case 'terms':
-        router.push(ROUTES.SETTINGS_ROUTES.TERMS);
+        router.push('/(app)/settings/terms');
         break;
     }
   };
 
   const handleEditProfile = () => {
-    router.push(ROUTES.SETTINGS_ROUTES.PROFILE);
+    router.push('/(app)/settings/profile');
   };
 
   const handleLogout = () => {
     setShowLogoutDialog(false);
-    // Use replace instead of push to prevent going back to the app
-    router.replace('/auth/login');
+    router.replace('/(auth)/index');
   };
 
   const renderMenuItem = (item) => {

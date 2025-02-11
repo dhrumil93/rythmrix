@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import FeatureCard from './FeatureCard';
-import { ROUTES } from '../../../navigation/routes';
+import { ROUTES } from '../../../../navigation/routes';
 
 const FEATURES = [
   {

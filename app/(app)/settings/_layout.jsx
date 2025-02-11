@@ -8,16 +8,16 @@ export default function SettingsLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="profile" />
-      <Stack.Screen name="plan" />
-      <Stack.Screen name="members" />
-      <Stack.Screen name="language" />
-      <Stack.Screen name="subscription" />
-      <Stack.Screen name="support" />
-      <Stack.Screen name="ui-mode" />
-      <Stack.Screen name="ecg-settings" />
-      <Stack.Screen name="privacy" />
-      <Stack.Screen name="terms" />
+      <Stack.Screen name="profile/index" />
+      <Stack.Screen name="plan/index" />
+      <Stack.Screen name="members/index" />
+      <Stack.Screen name="language/index" />
+      <Stack.Screen name="subscription/index" />
+      <Stack.Screen name="support/index" />
+      <Stack.Screen name="ui-mode/index" />
+      <Stack.Screen name="ecg-settings/index" />
+      <Stack.Screen name="privacy/index" />
+      <Stack.Screen name="terms/index" />
     </Stack>
   );
 } 

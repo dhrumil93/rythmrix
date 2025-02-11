@@ -21,7 +21,7 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "initialRouteName": "(auth)/Login"
+      "initialRouteName": "(auth)/index"
     },
     "plugins": [
       "expo-router",

@@ -24,9 +24,9 @@ export const ROUTES = {
     HYPERKALEMIA_REPORT: (id) => `/(app)/tests/hyperkalemia/reports/${id}`,
   },
   AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    FORGOT_PASSWORD: '/auth/forgot-password',
+    INDEX: '/(auth)/index',
+    // REGISTER: '/(auth)/index',
+    FORGOT_PASSWORD: '/(auth)/forgot-password',
   },
   SETTINGS_ROUTES: {
     PROFILE: '/(app)/settings/profile',

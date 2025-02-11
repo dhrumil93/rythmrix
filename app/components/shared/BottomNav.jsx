@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter, usePathname } from 'expo-router';
-import { ROUTES } from '../../navigation/routes';
+import { ROUTES } from '../../../navigation/routes';
 
 const NAV_ITEMS = [
   { 
