@@ -51,13 +51,13 @@ export default function UserHeader({ username = 'rekha' }) {
             style={styles.guestModeTab}
             onPress={() => isGuestMode && toggleGuestMode()}
           >
-            <Text style={styles.guestModeText}>OFF</Text>
+            <Text style={[styles.guestModeText, { color: isGuestMode ? '#074799' : '#FFFFFF' }]}>OFF</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.guestModeTab}
             onPress={() => !isGuestMode && toggleGuestMode()}
           >
-            <Text style={styles.guestModeText}>GUEST MODE</Text>
+            <Text style={[styles.guestModeText, { color: isGuestMode ? '#FFFFFF' : '#074799' }]}>GUEST MODE</Text>
           </TouchableOpacity>
           <Animated.View 
             style={[
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   guestModeText: {
     fontSize: 9,
-    color: ({ isActive }) => isActive ? '#fff' : '#074799',
+    // color: '#FFFFFF',
     fontWeight: '500',
   },
   slider: {
