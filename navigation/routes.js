@@ -28,7 +28,7 @@ export const ROUTES = {
     PROFILE: '/(app)/settings/profile',
     PLAN: '/(app)/settings/plan',
     MEMBERS: '/(app)/settings/members',
-    ADDMEMBERS: '/(app)/settings/addmembers',
+    // ADDMEMBERS: '/(app)/settings/addmembers',
     LANGUAGE: '/(app)/settings/language',
     SUBSCRIPTION: '/(app)/settings/subscription',
     SUPPORT: '/(app)/settings/support',
