@@ -18,7 +18,7 @@ export default function CustomInput({
     <View style={styles.inputGroup}>
       <Text style={styles.label}>{label}</Text>
       <View style={[styles.inputField, error && styles.inputFieldError]}>
-        <MaterialIcons name={icon} size={24} color="#666" />
+        <MaterialIcons name={icon} size={20} color="#666" />
         <TextInput
           placeholder={placeholder}
           style={styles.input}
@@ -32,7 +32,7 @@ export default function CustomInput({
           <TouchableOpacity onPress={togglePassword}>
             <MaterialIcons 
               name={showPassword ? "visibility" : "visibility-off"} 
-              size={24} 
+              size={20} 
               color="#666" 
             />
           </TouchableOpacity>

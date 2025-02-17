@@ -56,7 +56,10 @@ export default function MembersScreen() {
         contentContainerStyle={styles.listContent}
       />
 
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={() => router.push('/(app)/settings/members/addmembers')}
+      >
         <MaterialIcons name="add" size={24} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
