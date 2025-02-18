@@ -57,14 +57,15 @@ export default function ReportsList() {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingTop: 8,
-    paddingBottom: 100, // Space for bottom nav
+    paddingTop: 16,
+    paddingBottom: 120, // Increased padding to avoid overlap with bottom nav
+    paddingHorizontal: 2, // Adjusted horizontal padding
   },
   reportCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 16, // Adjusted margin bottom to match other content
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -104,4 +105,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-}); 
+});
