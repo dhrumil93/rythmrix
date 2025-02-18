@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
     color: '#074799',
     fontWeight: '500',
   },
-}); 
+});
