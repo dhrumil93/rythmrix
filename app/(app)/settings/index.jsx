@@ -88,7 +88,7 @@ export default function SettingsScreen() {
 
   const handleLogout = () => {
     setShowLogoutDialog(false);
-    router.replace('/(auth)/index');
+    router.replace('/(auth)');
   };
 
   const renderMenuItem = (item) => {

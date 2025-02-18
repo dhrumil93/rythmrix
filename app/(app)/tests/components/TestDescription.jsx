@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -11,43 +11,54 @@ export default function TestDescription({
 }) {
   const router = useRouter();
 
+  const [isChecked, setIsChecked] = React.useState(false);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={() => router.back()}
-      >
-        <MaterialIcons name="arrow-back" size={24} color="#333" />
-      </TouchableOpacity>
-
-      <View style={styles.header}>
-        <Image source={icon} style={styles.icon} />
-        <Text style={styles.title}>{title}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Test Description</Text>
-        <Text style={styles.description}>{description}</Text>
-      </View>
-
-      {benefits && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>What you will get?</Text>
-          {benefits.map((benefit, index) => (
-            <View key={index} style={styles.benefitItem}>
-              <MaterialIcons name="check-circle" size={20} color="#074799" />
-              <Text style={styles.benefitText}>{benefit}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity style={styles.checkbox}>
-          <MaterialIcons name="check-box-outline-blank" size={24} color="#074799" />
-          <Text style={styles.checkboxLabel}>Don't show this again</Text>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-      </View>
+
+        <View style={styles.header}>
+          <Image source={icon} style={styles.icon} />
+          <Text style={styles.title}>{title}</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Test Description</Text>
+          <Text style={styles.description}>{description}</Text>
+        </View>
+
+        {benefits && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>What you will get?</Text>
+            {benefits.map((benefit, index) => (
+              <View key={index} style={styles.benefitItem}>
+                <MaterialIcons name="check-circle" size={20} color="#074799" />
+                <Text style={styles.benefitText}>{benefit}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.checkboxContainer}>
+          <TouchableOpacity 
+            style={styles.checkbox}
+            onPress={() => setIsChecked(!isChecked)}
+          >
+            <MaterialIcons 
+              name={isChecked ? "check-box" : "check-box-outline-blank"} 
+              size={24} 
+              color="#074799" 
+            />
+            <Text style={styles.checkboxLabel}>Don't show this again</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
       <TouchableOpacity style={styles.startButton}>
         <Text style={styles.startButtonText}>Start Test</Text>
@@ -60,7 +71,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollViewContent: {
     padding: 20,
+    paddingBottom: 80, // Add padding to avoid overlap with the fixed button
   },
   backButton: {
     marginBottom: 20,
@@ -105,7 +119,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   checkboxContainer: {
-    marginTop: 'auto',
     marginBottom: 20,
   },
   checkbox: {
@@ -122,10 +135,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 30,
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
   startButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
-}); 
+});
