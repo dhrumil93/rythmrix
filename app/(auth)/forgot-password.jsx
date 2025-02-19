@@ -13,9 +13,7 @@ export default function ForgotPassword() {
   const { showToast } = useToast();
 
   const validateInput = () => {
-    // Basic email regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Phone regex (exactly 10 digits)
     const phoneRegex = /^\d{10}$/;
 
     if (!value.trim()) {
@@ -24,7 +22,7 @@ export default function ForgotPassword() {
     }
     
     if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError('Please enter a valid email or 10-digit phone number');
+      setError('Enter a valid email or 10-digit phone number');
       return false;
     }
 
@@ -54,11 +52,18 @@ export default function ForgotPassword() {
             placeholder="Enter your email or number"
             value={value}
             onChangeText={(text) => {
-              setValue(text);
+              let cleanedText = text.replace(/\s/g, ''); // Remove spaces
+
+              if (/^\d/.test(cleanedText)) {
+                // If first character is a digit, restrict to 10 numbers
+                cleanedText = cleanedText.replace(/\D/g, '').slice(0, 10);
+              }
+
+              setValue(cleanedText);
               if (error) setError('');
             }}
             error={error}
-            keyboardType="email-address"
+            keyboardType={/^\d/.test(value) ? 'numeric' : 'email-address'}
           />
           
           <Text style={styles.description}>
@@ -105,4 +110,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 16,
   },
-}); 
+});
+

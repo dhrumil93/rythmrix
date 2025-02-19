@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 24,
+    alignItems: 'center', // Center content
   },
   title: {
     fontSize: 20,
@@ -61,31 +62,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 24,
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   button: {
+    flex: 1, // Equal width for both buttons
     paddingVertical: 8,
-    paddingHorizontal: 16,
     borderRadius: 8,
-    marginLeft: 12,
+    alignItems: 'center',
+    marginHorizontal: 5, // Reduce space between buttons
   },
   cancelButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#074799', // Blue color for cancel button
   },
   logoutButton: {
-    backgroundColor: '#ff3b30',
+    backgroundColor: '#fff', // White background for logout button
+    borderWidth: 1,
+    borderColor: '#074799', // Blue border
   },
   cancelButtonText: {
-    color: '#333',
+    color: '#fff', // White text for cancel button
     fontSize: 16,
     fontWeight: '500',
   },
   logoutButtonText: {
-    color: '#fff',
+    color: '#074799', // Blue text for logout button
     fontSize: 16,
     fontWeight: '500',
   },
-}); 
+});
+ 

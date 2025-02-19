@@ -2,33 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter, usePathname } from 'expo-router';
-import { ROUTES } from '../../../navigation/routes';
 
 const NAV_ITEMS = [
-  { 
-    name: 'home', 
-    icon: 'home', 
-    label: 'Home',
-    route: ROUTES.HOME,
-  },
-  { 
-    name: 'reports', 
-    icon: 'description', 
-    label: 'Reports',
-    route: ROUTES.REPORTS
-  },
-  { 
-    name: 'articles', 
-    icon: 'article', 
-    label: 'Articles',
-    route: ROUTES.ARTICLES
-  },
-  { 
-    name: 'settings', 
-    icon: 'settings', 
-    label: 'Settings',
-    route: ROUTES.SETTINGS
-  },
+  { name: 'home', icon: 'home', label: 'Home', route: '/' },
+  { name: 'reports', icon: 'description', label: 'Reports', route: '/reports' },
+  { name: 'articles', icon: 'article', label: 'Articles', route: '/articles' },
+  { name: 'settings', icon: 'settings', label: 'Settings', route: '/settings' },
 ];
 
 export default function BottomNav() {
@@ -36,13 +15,12 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   const isRouteActive = (route) => {
-    if (route === ROUTES.HOME) {
-      // Check if it's home route or root path or empty path
-      return pathname === ROUTES.HOME || pathname === '/(app)' || pathname === '/';
+    if (route === "/") {
+      return pathname === "/" || pathname === "/home";
     }
-    // Check if the current path includes the route path
-    return pathname.includes(route.split('/')[2]);
+    return pathname.startsWith(route);
   };
+  
 
   return (
     <View style={styles.container}>
@@ -59,10 +37,7 @@ export default function BottomNav() {
               size={24}
               color={isActive ? '#074799' : '#666'}
             />
-            <Text style={[
-              styles.navText,
-              isActive && styles.activeNavText
-            ]}>
+            <Text style={[styles.navText, isActive && styles.activeNavText]}>
               {item.label}
             </Text>
           </TouchableOpacity>
@@ -78,7 +53,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eee',
     backgroundColor: '#fff',
-    paddingVertical: 6,
+    paddingVertical: 2,
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -92,7 +67,7 @@ const styles = StyleSheet.create({
   navItem: {
     flex: 1,
     alignItems: 'center',
-    padding: 6,
+    paddingVertical: 10,
   },
   activeNavItem: {
     backgroundColor: '#f0f4ff',

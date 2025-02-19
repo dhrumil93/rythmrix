@@ -13,6 +13,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import CustomInput from "../../../components/CustomInput";
+import GenderSelector from "../../../components/GenderSelector";
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -55,9 +56,6 @@ export default function EditProfileScreen() {
             }}
             style={styles.avatar}
           />
-          {/* <TouchableOpacity style={styles.cameraButton}>
-            <MaterialIcons name="camera-alt" size={20} color="#fff" />
-          </TouchableOpacity> */}
         </View>
 
         <View style={styles.form}>
@@ -106,14 +104,14 @@ export default function EditProfileScreen() {
               />
             </View>
             <View style={styles.halfInput}>
-              <CustomInput
-                icon="wc"
+              <GenderSelector
                 label="Gender"
-                value={formData.gender}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, gender: text })
-                }
                 required
+                value={formData.gender}
+                onChange={(value) => {
+                  setFormData({ ...formData, gender: value });
+                }}
+                
               />
             </View>
           </View>

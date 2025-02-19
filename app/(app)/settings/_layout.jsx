@@ -1,14 +1,17 @@
-import { Stack } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
+import { Stack, usePathname } from "expo-router";
+import { View, StyleSheet, Text } from "react-native";
+import BottomNav from "../../components/shared/BottomNav"; // Ensure correct path
 
 export default function SettingsLayout() {
+  const pathname = usePathname();
+  console.log("Current Pathname:", pathname); // Debugging
+
+  // Show BottomNav only on main settings page
+  const showBottomNav = pathname === "/settings" || pathname === "/(app)/settings";
+
   return (
     <View style={styles.container}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="profile/index" />
         <Stack.Screen name="plan/index" />
@@ -21,6 +24,7 @@ export default function SettingsLayout() {
         <Stack.Screen name="privacy/index" />
         <Stack.Screen name="terms/index" />
       </Stack>
+      {showBottomNav && <BottomNav />}
     </View>
   );
 }
@@ -28,6 +32,5 @@ export default function SettingsLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 60, // Adjust this value based on the height of your BottomNav
   },
 });

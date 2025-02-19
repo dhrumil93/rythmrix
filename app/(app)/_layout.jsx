@@ -11,7 +11,7 @@ export default function AppLayout() {
     "/(app)/reports",
     "/(app)/articles",
     "/(app)/settings",
-  ].includes(pathname);
+  ].some(route => pathname.startsWith(route));
 
   return (
     <View style={styles.container}>
