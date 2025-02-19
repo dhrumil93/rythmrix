@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import BottomNav from '../../components/shared/BottomNav';
 import { ROUTES } from '../../../navigation/routes';
 import LogoutDialog from '../../components/shared/LogoutDialog';
 
@@ -171,8 +170,6 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      <BottomNav />
-
       <LogoutDialog 
         visible={showLogoutDialog}
         onClose={() => setShowLogoutDialog(false)}
@@ -187,7 +184,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     paddingTop: StatusBar.currentHeight || 40,
-    
   },
   header: {
     paddingHorizontal: 24,
@@ -295,6 +291,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: 18,
   },
-}); 
+});

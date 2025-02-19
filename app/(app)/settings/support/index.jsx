@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Modal from 'react-native-modal';
 
 const HELP_TOPICS = [
   {
@@ -44,9 +45,14 @@ const HELP_TOPICS = [
 export default function SupportScreen() {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
   };
 
   return (
@@ -90,9 +96,23 @@ export default function SupportScreen() {
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={styles.contactButton}>
+      <TouchableOpacity style={styles.contactButton} onPress={toggleModal}>
         <Text style={styles.contactButtonText}>Contact Us</Text>
       </TouchableOpacity>
+
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={toggleModal}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Contact Us</Text>
+          <Text style={styles.modalText}>For any inquiries, please contact us at support@example.com or call us at (123) 456-7890.</Text>
+          <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -125,7 +145,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 80,
+    paddingBottom: 100, // Adjusted padding to avoid overlap with bottom nav
   },
   topicCard: {
     backgroundColor: '#fff',
@@ -169,4 +189,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-}); 
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    borderTopLeftRadius: 17,
+    borderTopRightRadius: 17,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: '#074799',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
