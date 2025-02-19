@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function ReportBanner() {
+  const [isVisible, setIsVisible] = useState(true);
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -17,7 +23,10 @@ export default function ReportBanner() {
         source={require("../../../../assets/images/doctor.png")}
         style={styles.image}
       />
-      <TouchableOpacity style={styles.closeButton}>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => setIsVisible(false)}
+      >
         <Text style={styles.closeText}>×</Text>
       </TouchableOpacity>
     </View>
