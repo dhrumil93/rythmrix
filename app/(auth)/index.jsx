@@ -161,6 +161,10 @@ export default function AuthScreen() {
         onChangeText={(text) => {
           // Remove spaces from input
           const cleanText = text.replace(/\s/g, '');
+          // Limit phone number to 10 digits
+          if (/^\d+$/.test(cleanText) && cleanText.length > 10) {
+            return;
+          }
           setLoginData({ ...loginData, emailOrPhone: cleanText });
           if (loginErrors.emailOrPhone) {
             setLoginErrors({ ...loginErrors, emailOrPhone: '' });
@@ -229,6 +233,10 @@ export default function AuthScreen() {
         keyboardType="phone-pad"
         value={signupData.phone}
         onChangeText={(text) => {
+          // Limit phone number to 10 digits
+          if (/^\d+$/.test(text) && text.length > 10) {
+            return;
+          }
           setSignupData({ ...signupData, phone: text });
           if (signupErrors.phone) {
             setSignupErrors({ ...signupErrors, phone: '' });
@@ -504,4 +512,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 16,
   },
-}); 
+});
