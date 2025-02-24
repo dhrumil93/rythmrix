@@ -9,6 +9,7 @@ export default function MembersLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="addmembers/index" />
+      <Stack.Screen name="editmembers/index" />
     </Stack>
   );
 }

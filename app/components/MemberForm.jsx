@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 import CustomInput from "./CustomInput";
 import CustomButton from "./CustomButton";
-import GenderSelector from "./GenderSelector";
 
 export default function MemberForm({
   memberData,
@@ -28,18 +28,25 @@ export default function MemberForm({
         error={errors.name}
       />
 
-      <CustomInput
-        label="Email Address"
-        icon="email"
-        placeholder="Enter email address"
-        keyboardType="email-address"
-        value={memberData.email}
-        onChangeText={(text) => {
-          onChangeData("email", text);
-          if (errors.email) onClearError("email");
-        }}
-        error={errors.email}
-      />
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Relation</Text>
+        <View style={[styles.pickerContainer, errors.relation && styles.errorInput]}>
+          <Picker
+            selectedValue={memberData.relation}
+            onValueChange={(value) => {
+              onChangeData("relation", value);
+              if (errors.relation) onClearError("relation");
+            }}
+          >
+            <Picker.Item label="Select relation" value="" />
+            <Picker.Item label="Father" value="Father" />
+            <Picker.Item label="Mother" value="Mother" />
+            <Picker.Item label="Sibling" value="Sibling" />
+            <Picker.Item label="Spouse" value="Spouse" />
+          </Picker>
+        </View>
+        {errors.relation && <Text style={styles.errorText}>{errors.relation}</Text>}
+      </View>
 
       <View style={styles.row}>
         <View style={styles.halfWidth}>
@@ -59,16 +66,24 @@ export default function MemberForm({
         </View>
 
         <View style={styles.halfWidth}>
-          <GenderSelector
-            label="Gender"
-            required
-            value={memberData.gender}
-            onChange={(value) => {
-              onChangeData("gender", value);
-              if (errors.gender) onClearError("gender");
-            }}
-            error={errors.gender}
-          />
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Gender</Text>
+            <View style={[styles.pickerContainer, errors.gender && styles.errorInput]}>
+              <Picker
+                selectedValue={memberData.gender}
+                onValueChange={(value) => {
+                  onChangeData("gender", value);
+                  if (errors.gender) onClearError("gender");
+                }}
+              >
+                <Picker.Item label="Select gender" value="" />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+                <Picker.Item label="Other" value="Other" />
+              </Picker>
+            </View>
+            {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
+          </View>
         </View>
       </View>
 
@@ -107,10 +122,11 @@ export default function MemberForm({
       </View>
 
       <CustomButton
-        title="Next"
+        title="Save"
         onPress={onSubmit}
         disabled={
           !memberData.name ||
+          !memberData.relation ||
           !memberData.age ||
           !memberData.gender ||
           !memberData.weight ||
@@ -138,5 +154,26 @@ const styles = StyleSheet.create({
   },
   halfWidth: {
     flex: 1,
+  },
+  formGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    color: "#333",
+    marginBottom: 8,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 0,
+  },
+  errorInput: {
+    borderColor: "#ff3b30",
+  },
+  errorText: {
+    color: "#ff3b30",
+    marginTop: 4,
   },
 });

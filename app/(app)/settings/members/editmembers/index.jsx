@@ -56,7 +56,7 @@ export default function AddMemberScreen() {
 
     if (isValid) {
       // Add member logic here
-      showToast("Member added successfully!", "success");
+      showToast("Member updated successfully!", "success");
       router.back();
     } else {
       setErrors(validationErrors);
@@ -77,7 +77,7 @@ export default function AddMemberScreen() {
         >
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.title}>Add Member</Text>
+        <Text style={styles.title}>Edit Member</Text>
       </View>
 
       <ScrollView
