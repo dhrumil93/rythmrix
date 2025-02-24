@@ -1,39 +1,45 @@
-export const validateMemberData = (memberData) => {
+export const validateMemberData = (data) => {
   const errors = {};
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let isValid = true;
 
-  if (!memberData.name.trim()) {
+  if (!data.name.trim()) {
     errors.name = 'Name is required';
+    isValid = false;
   }
 
-  if (memberData.email && !emailRegex.test(memberData.email)) {
-    errors.email = 'Please enter a valid email address';
+  if (!data.relation.trim()) {
+    errors.relation = 'Relation is required';
+    isValid = false;
   }
 
-  if (!memberData.age) {
+  if (!data.age.trim()) {
     errors.age = 'Age is required';
-  } else if (isNaN(memberData.age) || parseInt(memberData.age) <= 0) {
+    isValid = false;
+  } else if (isNaN(data.age) || data.age <= 0) {
     errors.age = 'Please enter a valid age';
+    isValid = false;
   }
 
-  if (!memberData.gender) {
+  if (!data.gender.trim()) {
     errors.gender = 'Gender is required';
+    isValid = false;
   }
 
-  if (!memberData.weight) {
+  if (!data.weight.trim()) {
     errors.weight = 'Weight is required';
-  } else if (isNaN(memberData.weight) || parseInt(memberData.weight) <= 0) {
+    isValid = false;
+  } else if (isNaN(data.weight) || data.weight <= 0) {
     errors.weight = 'Please enter a valid weight';
+    isValid = false;
   }
 
-  if (!memberData.height) {
+  if (!data.height.trim()) {
     errors.height = 'Height is required';
-  } else if (isNaN(memberData.height) || parseInt(memberData.height) <= 0) {
+    isValid = false;
+  } else if (isNaN(data.height) || data.height <= 0) {
     errors.height = 'Please enter a valid height';
+    isValid = false;
   }
 
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors
-  };
-}; 
+  return { isValid, errors };
+};
