@@ -36,7 +36,8 @@ export default function ReportBanner() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "#f0f4ff",
+    backgroundColor: "#f0f8ff",
+    marginHorizontal: 14,
     borderRadius: 12,
     padding: 16,
     position: "relative",

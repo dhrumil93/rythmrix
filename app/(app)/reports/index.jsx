@@ -24,9 +24,10 @@ export default function ReportsScreen() {
 
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>My Reports (3)</Text>
-        <ReportBanner />
-        <ReportsList />
       </View>
+      <ReportBanner />
+
+      <ReportsList />
 
       <BottomNav />
     </SafeAreaView>
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   content: {
-    flex: 1,
     paddingHorizontal: 24,
   },
   sectionTitle: {
