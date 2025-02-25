@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ROUTES } from "../../../navigation/routes";
+// import { ROUTES } from "../../../navigation/routes";
 import LogoutDialog from "../../components/shared/LogoutDialog";
+import BottomNav from "../../components/shared/BottomNav";
 
 const MENU_ITEMS = {
   profile: {
@@ -192,6 +193,7 @@ export default function SettingsScreen() {
         onClose={() => setShowLogoutDialog(false)}
         onLogout={handleLogout}
       />
+      <BottomNav />
     </SafeAreaView>
   );
 }
@@ -201,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     paddingTop: StatusBar.currentHeight || 40,
-    paddingBottom:60
+    paddingBottom: 60,
   },
   header: {
     paddingHorizontal: 24,
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
   editButton: {
     paddingHorizontal: 20,
     paddingVertical: 8,
-    backgroundColor: "#ff3b30",
+    backgroundColor: "#074799",
     borderRadius: 20,
   },
   editButtonText: {

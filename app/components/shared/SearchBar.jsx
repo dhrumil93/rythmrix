@@ -6,7 +6,7 @@ export default function SearchBar({ placeholder, onChangeText }) {
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
-        <MaterialIcons name="search" size={18} color="#666" />
+        <MaterialIcons name="search" size={24} color="#666" />
         <TextInput
           style={styles.input}
           placeholder={placeholder}

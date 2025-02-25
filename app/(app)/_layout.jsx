@@ -1,32 +1,18 @@
-import { Stack, usePathname } from "expo-router";
+import { Slot, usePathname } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import BottomNav from "../components/shared/BottomNav"; // Adjust path if necessary
 
 export default function AppLayout() {
   const pathname = usePathname();
 
-  // Define the routes where the BottomNav should be displayed
-  const showBottomNav = [
-    "/(app)/home",
-    "/(app)/reports",
-    "/(app)/articles",
-    "/(app)/settings",
-  ].some(route => pathname.startsWith(route));
+  // Show bottom nav only on main pages, not on settings subpages
+  const showBottomNav = ["/home", "/reports", "/articles", "/settings"].includes(pathname);
 
   return (
     <View style={styles.container}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="home" />
-        <Stack.Screen name="reports" />
-        <Stack.Screen name="articles" />
-        <Stack.Screen name="settings" />
-        <Stack.Screen name="tests" />
-      </Stack>
+      <View style={styles.content}>
+        <Slot /> 
+      </View>
       {showBottomNav && <BottomNav />}
     </View>
   );
@@ -35,5 +21,8 @@ export default function AppLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    flex: 1, // Ensures content area takes up all space above BottomNav
   },
 });

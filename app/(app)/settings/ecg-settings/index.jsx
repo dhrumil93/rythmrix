@@ -1,92 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
-const SETTINGS_OPTIONS = [
-  {
-    id: 'notifications',
-    title: 'ECG Notifications',
-    description: 'Get notified about irregular rhythms and completed recordings',
-    type: 'switch'
-  },
-  {
-    id: 'recording_length',
-    title: 'Recording Length',
-    description: '30 seconds',
-    type: 'select'
-  },
-  {
-    id: 'lead_config',
-    title: 'Lead Configuration',
-    description: 'Standard 12-lead',
-    type: 'select'
-  },
-  {
-    id: 'auto_analysis',
-    title: 'Automatic Analysis',
-    description: 'AI-powered ECG analysis after recording',
-    type: 'switch'
-  },
-  {
-    id: 'grid',
-    title: 'Show ECG Grid',
-    description: 'Display grid lines on ECG recordings',
-    type: 'switch'
-  },
-  {
-    id: 'backup',
-    title: 'Auto Backup',
-    description: 'Automatically backup ECG recordings',
-    type: 'switch'
-  }
-];
-
 export default function ECGSettingsScreen() {
   const router = useRouter();
-  const [switches, setSwitches] = useState({
-    notifications: true,
-    auto_analysis: true,
-    grid: true,
-    backup: true
-  });
+  const [autoStart, setAutoStart] = useState(false);
+  const [switchPosition, setSwitchPosition] = useState(false);
+  const [interpretation, setInterpretation] = useState(false);
+  const [startDuration, setStartDuration] = useState(1);
+  const [switchDuration, setSwitchDuration] = useState(5);
 
-  const toggleSwitch = (id) => {
-    setSwitches(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+  const handleIncrement = (setter, value, max = 10) => {
+    setter(prev => Math.min(prev + 1, max));
   };
 
-  const handleOptionPress = (option) => {
-    if (option.type === 'select') {
-      // Handle selection options
-      console.log('Open selection for:', option.id);
-    }
+  const handleDecrement = (setter, value, min = 1) => {
+    setter(prev => Math.max(prev - 1, min));
   };
-
-  const renderOption = (option) => (
-    <TouchableOpacity
-      key={option.id}
-      style={styles.optionCard}
-      onPress={() => option.type === 'select' && handleOptionPress(option)}
-    >
-      <View style={styles.optionInfo}>
-        <Text style={styles.optionTitle}>{option.title}</Text>
-        <Text style={styles.optionDescription}>{option.description}</Text>
-      </View>
-      {option.type === 'switch' ? (
-        <Switch
-          value={switches[option.id]}
-          onValueChange={() => toggleSwitch(option.id)}
-          trackColor={{ false: '#ddd', true: '#a7c8ff' }}
-          thumbColor={switches[option.id] ? '#074799' : '#f4f3f4'}
-        />
-      ) : (
-        <MaterialIcons name="chevron-right" size={24} color="#666" />
-      )}
-    </TouchableOpacity>
-  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,12 +33,81 @@ export default function ECGSettingsScreen() {
         <Text style={styles.title}>ECG Settings</Text>
       </View>
 
-      <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        {SETTINGS_OPTIONS.map(renderOption)}
+      <ScrollView style={styles.content}>
+        {/* Auto Start Section */}
+        <Text style={styles.sectionTitle}>Auto Start</Text>
+        <View style={styles.settingCard}>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingLabel}>Auto Start Test</Text>
+            <TouchableOpacity
+              style={[styles.toggle, autoStart && styles.toggleActive]}
+              onPress={() => setAutoStart(!autoStart)}
+            >
+              <View style={[styles.toggleHandle, autoStart && styles.toggleHandleActive]} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.durationRow}>
+            <MaterialIcons name="timer" size={24} color="#666" />
+            <Text style={styles.durationLabel}>Start Duration</Text>
+            <View style={styles.durationControls}>
+              <TouchableOpacity onPress={() => handleDecrement(setStartDuration)} style={styles.durationButton}>
+                <MaterialIcons name="remove" size={24} color="#074799" />
+              </TouchableOpacity>
+              <Text style={styles.durationValue}>{startDuration} sec</Text>
+              <TouchableOpacity onPress={() => handleIncrement(setStartDuration)} style={styles.durationButton}>
+                <MaterialIcons name="add" size={24} color="#074799" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* Auto Switch Position */}
+        <Text style={styles.sectionTitle}>Auto Switch Position</Text>
+        <View style={styles.settingCard}>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingLabel}>Switch Lead Position</Text>
+            <TouchableOpacity
+              style={[styles.toggle, switchPosition && styles.toggleActive]}
+              onPress={() => setSwitchPosition(!switchPosition)}
+            >
+              <View style={[styles.toggleHandle, switchPosition && styles.toggleHandleActive]} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.durationRow}>
+            <MaterialIcons name="timer" size={24} color="#666" />
+            <Text style={styles.durationLabel}>Switch Duration</Text>
+            <View style={styles.durationControls}>
+              <TouchableOpacity onPress={() => handleDecrement(setSwitchDuration)} style={styles.durationButton}>
+                <MaterialIcons name="remove" size={24} color="#074799" />
+              </TouchableOpacity>
+              <Text style={styles.durationValue}>{switchDuration} sec</Text>
+              <TouchableOpacity onPress={() => handleIncrement(setSwitchDuration)} style={styles.durationButton}>
+                <MaterialIcons name="add" size={24} color="#074799" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* ECG Interpretation */}
+        <Text style={styles.sectionTitle}>ECG Interpretation</Text>
+        <View style={styles.settingCard}>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingLabel}>Switch Lead Position</Text>
+            <TouchableOpacity
+              style={[styles.toggle, interpretation && styles.toggleActive]}
+              onPress={() => setInterpretation(!interpretation)}
+            >
+              <View style={[styles.toggleHandle, interpretation && styles.toggleHandleActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
+
+      <TouchableOpacity style={styles.saveButton}>
+        <Text style={styles.saveButtonText}>Save Changes</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -116,13 +116,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: StatusBar.currentHeight || 40,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   backButton: {
     marginRight: 16,
@@ -133,34 +134,88 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   content: {
-    padding: 16,
-  },
-  optionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  optionInfo: {
     flex: 1,
-    marginRight: 16,
+    padding: 16,
   },
-  optionTitle: {
-    fontSize: 16,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 4,
+    marginBottom: 12,
   },
-  optionDescription: {
-    fontSize: 14,
+  settingCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  settingLabel: {
+    fontSize: 16,
+    color: '#333',
+  },
+  toggle: {
+    width: 50,
+    height: 30,
+    backgroundColor: '#ddd',
+    borderRadius: 15,
+    padding: 2,
+  },
+  toggleActive: {
+    backgroundColor: '#074799',
+  },
+  toggleHandle: {
+    width: 26,
+    height: 26,
+    backgroundColor: '#fff',
+    borderRadius: 13,
+  },
+  toggleHandleActive: {
+    transform: [{ translateX: 20 }],
+  },
+  durationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  durationLabel: {
+    fontSize: 16,
     color: '#666',
+    marginLeft: 8,
+    flex: 1,
+  },
+  durationControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  durationButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  durationValue: {
+    fontSize: 16,
+    color: '#333',
+    marginHorizontal: 16,
+  },
+  saveButton: {
+    backgroundColor: '#074799',
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 }); 
