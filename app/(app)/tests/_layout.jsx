@@ -9,6 +9,8 @@ export default function TestsLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="12l-ecg" />
+      <Stack.Screen name="12l-ecg/placement" />
+      <Stack.Screen name="12l-ecg/recording" />
       <Stack.Screen name="heart-risk" />
       <Stack.Screen name="hrv" />
       <Stack.Screen name="live-monitor" />

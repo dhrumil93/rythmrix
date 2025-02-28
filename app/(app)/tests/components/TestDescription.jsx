@@ -13,6 +13,13 @@ export default function TestDescription({
 
   const [isChecked, setIsChecked] = React.useState(false);
 
+  const handleStartTest = () => {
+    // For now, only 12-lead ECG has the electrode placement page
+    if (title === '12 Lead ECG Test') {
+      router.push('/tests/12l-ecg/placement');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -60,7 +67,10 @@ export default function TestDescription({
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.startButton}>
+      <TouchableOpacity 
+        style={styles.startButton}
+        onPress={handleStartTest}
+      >
         <Text style={styles.startButtonText}>Start Test</Text>
       </TouchableOpacity>
     </View>
