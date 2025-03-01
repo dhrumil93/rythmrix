@@ -1,14 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const LEADS = [
-  { id: 'V1', color: '#FFD700' },  // Yellow for active
-  { id: 'V2', color: '#E0E0E0' },  // Gray for inactive
-  { id: 'V3', color: '#E0E0E0' },
-  { id: 'II', color: '#E0E0E0' },
-  { id: 'L', color: '#E0E0E0' },
+  { id: "V1", color: "#FFD700" }, // Yellow for active
+  { id: "V2", color: "#E0E0E0" }, // Gray for inactive
+  { id: "V3", color: "#E0E0E0" },
+  { id: "II", color: "#E0E0E0" },
+  { id: "L", color: "#E0E0E0" },
 ];
 
 export default function ElectrodePlacement() {
@@ -17,7 +17,7 @@ export default function ElectrodePlacement() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
@@ -28,7 +28,7 @@ export default function ElectrodePlacement() {
 
       <View style={styles.leadsContainer}>
         {LEADS.map((lead) => (
-          <View 
+          <View
             key={lead.id}
             style={[styles.leadCircle, { backgroundColor: lead.color }]}
           >
@@ -38,8 +38,8 @@ export default function ElectrodePlacement() {
       </View>
 
       <View style={styles.imageContainer}>
-        <Image 
-          source={require('../../../../assets/images/body-outline.png')}
+        <Image
+          source={require("../../../../assets/images/body-outline.png")}
           style={styles.image}
           resizeMode="contain"
         />
@@ -55,9 +55,9 @@ export default function ElectrodePlacement() {
         </View>
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.startButton}
-        onPress={() => router.push('/tests/12l-ecg/recording')}
+        onPress={() => router.push("/tests/12l-ecg/v1")}
       >
         <Text style={styles.startButtonText}>Start Test</Text>
       </TouchableOpacity>
@@ -68,26 +68,26 @@ export default function ElectrodePlacement() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   backButton: {
     marginRight: 16,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   leadsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     paddingVertical: 20,
     gap: 16,
   },
@@ -95,61 +95,61 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   leadText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   imageContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   image: {
-    width: '80%',
-    height: '80%',
-    marginBottom:48
+    width: "80%",
+    height: "80%",
+    marginBottom: 48,
   },
   marker: {
-    position: 'absolute',
+    position: "absolute",
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#074799',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#074799",
+    justifyContent: "center",
+    alignItems: "center",
   },
   markerText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   markerRA: {
-    left: '30%',
-    top: '31%',
+    left: "30%",
+    top: "31%",
   },
   markerLA: {
-    right: '29%',
-    top: '31%',
+    right: "29%",
+    top: "31%",
   },
   markerV1: {
-    left: '40%',
-    top: '43%',
+    left: "40%",
+    top: "43%",
   },
   startButton: {
-    backgroundColor: '#074799',
+    backgroundColor: "#074799",
     margin: 16,
     paddingVertical: 16,
     borderRadius: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   startButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
-}); 
+});
