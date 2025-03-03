@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import TestDescription from './components/TestDescription';
+import TestDescription from '../components/TestDescription';
 
 export default function HRVTest() {
   return (
@@ -8,7 +8,7 @@ export default function HRVTest() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <TestDescription 
-        icon={require('../../../assets/images/bike.png')}
+        icon={require('../../../../assets/images/bike.png')}
         title="Heart Rate Variability (HRV)"
         description="Measure the variation in time between consecutive heartbeats to assess your stress levels and overall heart health."
         benefits={[

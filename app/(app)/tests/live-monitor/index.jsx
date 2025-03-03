@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import TestDescription from './components/TestDescription';
+import TestDescription from '../components/TestDescription';
 
 export default function LiveMonitorTest() {
   return (
@@ -8,7 +8,7 @@ export default function LiveMonitorTest() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <TestDescription 
-        icon={require('../../../assets/images/monitor.png')}
+        icon={require('../../../../assets/images/monitor.png')}
         title="Live Heart Monitor"
         description="Continuous real-time monitoring of your heart's electrical activity for extended periods to detect any irregularities or patterns."
         benefits={[

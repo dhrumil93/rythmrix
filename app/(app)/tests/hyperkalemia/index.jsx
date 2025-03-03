@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import TestDescription from './components/TestDescription';
+import TestDescription from '../components/TestDescription';
 
 export default function HyperkalemiaTest() {
   return (
@@ -8,7 +8,7 @@ export default function HyperkalemiaTest() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <TestDescription 
-        icon={require('../../../assets/images/potassium.png')}
+        icon={require('../../../../assets/images/potassium.png')}
         title="Hyperkalemia Test"
         description="Screen for elevated potassium levels in your blood through ECG analysis, which can indicate various cardiac and metabolic conditions."
         benefits={[

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import TestDescription from './components/TestDescription';
+import TestDescription from '../components/TestDescription';
 
 export default function LeadTwoECGTest() {
   return (
@@ -8,7 +8,7 @@ export default function LeadTwoECGTest() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <TestDescription 
-        icon={require('../../../assets/images/lead2.png')}
+        icon={require('../../../../assets/images/lead2.png')}
         title="Lead II ECG"
         description="A focused ECG test that records the heart's electrical activity between two specific points, ideal for basic rhythm analysis and arrhythmia detection."
         benefits={[

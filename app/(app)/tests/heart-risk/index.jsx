@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import TestDescription from './components/TestDescription';
+import TestDescription from '../components/TestDescription';
 
 export default function HeartRiskTest() {
   return (
@@ -8,7 +8,7 @@ export default function HeartRiskTest() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <TestDescription 
-        icon={require('../../../assets/images/heart.png')}
+        icon={require('../../../../assets/images/heart.png')}
         title="Heart Risk Calculator"
         description="Calculate your heart health risk based on various factors including age, lifestyle, and medical history."
         benefits={[
