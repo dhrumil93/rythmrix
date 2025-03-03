@@ -1,12 +1,12 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
-import ECGRecording from '../components/ECGRecording';
+import ECGRecording from '../../components/ECGRecording';
 
-export default function V2RecordingScreen() {
+export default function V3RecordingScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#003087" barStyle="light-content" />
-      <ECGRecording activeLead="V2" />
+      <ECGRecording activeLead="V3" />
     </SafeAreaView>
   );
 }
