@@ -16,7 +16,7 @@ export default function TestDescription({
   const handleStartTest = () => {
     // For now, only 12-lead ECG has the electrode placement page
     if (title === '12 Lead ECG Test') {
-      router.push('/tests/12l-ecg/placement');
+      router.push('/tests/12l-ecg/steps/v1');
     }
   };
 

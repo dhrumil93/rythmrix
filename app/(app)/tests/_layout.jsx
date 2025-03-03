@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 
 export default function TestsLayout() {
   return (
@@ -9,14 +9,11 @@ export default function TestsLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="12l-ecg/index" />
-      <Stack.Screen name="12l-ecg/placement" />
-      <Stack.Screen name="12l-ecg/user-details" />
-      <Stack.Screen name="12l-ecg/v1/index" />
+      <Stack.Screen name="12l-ecg/steps/v1" />
       <Stack.Screen name="12l-ecg/v2" />
       <Stack.Screen name="12l-ecg/v3" />
       <Stack.Screen name="12l-ecg/ii" />
       <Stack.Screen name="12l-ecg/l" />
-      <Stack.Screen name="12l-ecg/member-report" />
       <Stack.Screen name="heart-risk" />
       <Stack.Screen name="hrv" />
       <Stack.Screen name="live-monitor" />
