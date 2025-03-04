@@ -37,8 +37,8 @@ const ECGRecordingScreen = ({ activeLead = "V1" }) => {
     const nextLead = {
       V1: "v2",
       V2: "v3",
-      V3: "ii",
-      II: "l",
+      V3: "ll",
+      LL: "l",
       L: "complete",
     }[activeLead];
 

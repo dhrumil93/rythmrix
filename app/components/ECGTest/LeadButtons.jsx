@@ -21,7 +21,7 @@ const LeadButton = ({ label, isActive, disabled, onPress }) => (
 );
 
 export const LeadButtons = ({ activeLead, onLeadPress, disabled }) => {
-  const leads = ['V1', 'V2', 'V3', 'II', 'L'];
+  const leads = ['V1', 'V2', 'V3', 'll', 'L'];
 
   return (
     <View style={styles.container}>
