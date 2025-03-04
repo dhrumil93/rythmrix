@@ -52,7 +52,7 @@ const lTestScreen = () => {
 
       {/* Lead selection buttons - always visible */}
       <View style={styles.leadButtonsContainer}>
-        <LeadButtons activeLead="l" disabled={isRecording} />
+        <LeadButtons activeLead="L" disabled={isRecording} />
       </View>
 
       {!isRecording ? (

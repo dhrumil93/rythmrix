@@ -43,7 +43,7 @@ const ECGRecordingScreen = ({ activeLead = "V1" }) => {
     }[activeLead];
 
     if (nextLead === "complete") {
-      router.push("/tests/12l-ecg/complete");
+      router.push("/tests/12l-ecg/user-info");
     } else {
       router.push(`/tests/12l-ecg/${nextLead}/recording`);
     }
