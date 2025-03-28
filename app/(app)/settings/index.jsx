@@ -36,6 +36,7 @@ const MENU_ITEMS = {
       { id: "language", title: "Change Language", showArrow: true },
       { id: "subscription", title: "Subscription History", showArrow: true },
       { id: "support", title: "Help & Support", showArrow: true },
+      { id: "article", title: "Articles", showArrow: true },
     ],
   },
   appSettings: {
@@ -75,6 +76,11 @@ export default function SettingsScreen() {
         break;
       case "support":
         router.push("/(app)/settings/support");
+        break;
+      case "article":
+        router.push("/(app)/settings/articles");
+        break;
+
         break;
       case "ui":
         router.push("/(app)/settings/ui-mode");
