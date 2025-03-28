@@ -18,6 +18,9 @@ export default function TestDescription({
     if (title === '12 Lead ECG Test') {
       router.push('/tests/12l-ecg/steps/v1');
     }
+    if (title === 'Heart Risk Calculator') {
+      router.push('/tests/product');
+    }
   };
 
   return (

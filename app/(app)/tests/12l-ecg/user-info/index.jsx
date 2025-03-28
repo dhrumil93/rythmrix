@@ -17,7 +17,7 @@ const UserInfoScreen = () => {
   const [formData, setFormData] = useState({
     name: "",
     age: "",
-    gender: "",
+    gender: "Female",
     weight: "",
     height: "",
   });
@@ -27,7 +27,13 @@ const UserInfoScreen = () => {
   };
 
   const handleSubmit = () => {
-    router.push("/tests/12l-ecg/steps/v1");
+    router.push({
+      pathname: "/tests/12l-ecg/report",
+      params: {
+        ...formData,
+        date: new Date().toLocaleString(),
+      }
+    });
   };
 
   return (
@@ -83,9 +89,16 @@ const UserInfoScreen = () => {
               <Text style={styles.label}>
                 Gender <Text style={styles.required}>*</Text>
               </Text>
-              <View style={styles.input}>
-                <Text style={styles.selectText}>Select</Text>
-                <AntDesign name="down" size={12} color="#999" />
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.gender}
+                  onValueChange={(value) => handleInputChange("gender", value)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Other" value="Other" />
+                </Picker>
               </View>
             </View>
           </View>
@@ -193,6 +206,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     letterSpacing: 1,
+  },
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  picker: {
+    height: 40,
+    backgroundColor: '#fff',
   },
 });
 
