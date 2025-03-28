@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'expo-router';
 const NAV_ITEMS = [
   { name: 'home', icon: 'home', label: 'Home', route: '/' },
   { name: 'reports', icon: 'description', label: 'Reports', route: '/reports' },
-  { name: 'articles', icon: 'article', label: 'Articles', route: '/articles' },
+  { name: 'activity', icon: 'article', label: 'Activities', route: '/activities' },
   { name: 'settings', icon: 'settings', label: 'Settings', route: '/settings' },
 ];
 
