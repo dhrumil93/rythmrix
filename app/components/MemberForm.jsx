@@ -20,9 +20,9 @@ export default function MemberForm({
         required
         icon="person"
         placeholder="Enter full name"
-        value={memberData.name}
+        value={memberData.full_name}
         onChangeText={(text) => {
-          onChangeData("name", text);
+          onChangeData("full_name", text);
           if (errors.name) onClearError("name");
         }}
         error={errors.name}
@@ -125,7 +125,7 @@ export default function MemberForm({
         title="Save"
         onPress={onSubmit}
         disabled={
-          !memberData.name ||
+          !memberData.full_name ||
           !memberData.relation ||
           !memberData.age ||
           !memberData.gender ||

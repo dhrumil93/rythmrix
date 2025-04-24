@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,86 +6,101 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
-  Image,
-  FlatList,
-} from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-
-const MEMBERS = [
-  {
-    id: "1",
-    name: "Rekha",
-    relation: "Self",
-    status: "Active",
-    avatar: "https://api.dicebear.com/7.x/avataaars/png?seed=rekha",
-  },
-  {
-    id: "2",
-    name: "Hardik",
-    relation: "Father",
-    avatar: "https://api.dicebear.com/7.x/avataaars/png?seed=rekha",
-  },
-];
+  ScrollView,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useToast } from '../../../context/ToastContext';
 
 export default function MembersScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
+  const [members, setMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const renderMember = ({ item }) => (
-    <View style={styles.memberCard}>
-      <Image source={{ uri: item.avatar }} style={styles.memberAvatar} />
-      <View style={styles.memberInfo}>
-        <Text style={styles.memberName}>{item.name}</Text>
-        <Text style={styles.memberRelation}>{item.relation}</Text>
-      </View>
-      {item.relation === "Self" ? (
-        // Show "Active" status if relation is "Self"
-        <View style={[styles.statusBadge, styles.activeBadge]}>
-          <Text style={[styles.statusText, styles.activeText]}>Active</Text>
-        </View>
-      ) : (
-        // Show "Edit" button for other relations
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => router.push("/(app)/settings/members/editmembers")}
-        >
-          <Text style={styles.editButtonText}>Edit</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
+
+      const response = await fetch('https://ecg-s6x7.onrender.com/api/adduser/getall-family-members', {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      
+      setMembers(data.data || []);
+    } catch (error) {
+      showToast(error.message || 'Failed to fetch members', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditMember = (memberId) => {
+    router.push({
+      pathname: '/settings/members/editmembers',
+      params: { id: memberId }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
-
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.title}>All Members</Text>
+        <Text style={styles.title}>Family Members</Text>
+        <TouchableOpacity 
+          onPress={() => router.push('/settings/members/addmembers')}
+          style={styles.addButton}
+        >
+          <MaterialIcons name="add" size={24} color="#074799" />
+        </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={MEMBERS}
-        renderItem={renderMember}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-      />
-
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => router.push("/(app)/settings/members/addmembers")}
-      >
-        <MaterialIcons name="add" size={24} color="#fff" />
-      </TouchableOpacity>
+      <ScrollView style={styles.content}>
+        {isLoading ? (
+          <View style={styles.centerContent}>
+            <Text>Loading...</Text>
+          </View>
+        ) : members.length === 0 ? (
+          <View style={styles.centerContent}>
+            <Text style={styles.emptyText}>No family members added yet</Text>
+          </View>
+        ) : (
+          members.map((member) => (
+            <TouchableOpacity
+              key={member._id}
+              style={styles.memberCard}
+              onPress={() => handleEditMember(member._id)}
+            >
+              <View>
+                <Text style={styles.memberName}>{member.full_name}</Text>
+                <Text style={styles.memberDetails}>
+                  {member.relation} • {member.age} years • {member.gender}
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={24} color="#666" />
+            </TouchableOpacity>
+          ))
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -93,101 +108,58 @@ export default function MembersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    paddingTop: StatusBar.currentHeight || 40,
+    backgroundColor: '#f5f5f5',
+    paddingTop: StatusBar.currentHeight,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   backButton: {
-    marginRight: 16,
+    padding: 8,
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
   },
-  listContent: {
+  addButton: {
+    padding: 8,
+  },
+  content: {
+    flex: 1,
     padding: 16,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 40,
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 16,
   },
   memberCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  memberAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#f0f0f0",
-  },
-  memberInfo: {
-    flex: 1,
-    marginLeft: 12,
   },
   memberName: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
   },
-  memberRelation: {
+  memberDetails: {
     fontSize: 14,
-    color: "#666",
-    marginTop: 4,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: "#f0f0f0",
-  },
-  activeBadge: {
-    backgroundColor: "#e8ffe8",
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#666",
-  },
-  activeText: {
-    color: "#28a745",
-  },
-  addButton: {
-    position: "absolute",
-    bottom: 24,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#074799",
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  editButton: {
-    backgroundColor: "#074799",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  editButtonText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "bold",
+    color: '#666',
   },
 });

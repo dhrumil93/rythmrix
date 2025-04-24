@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   ScrollView,
   SafeAreaView,
@@ -8,18 +8,32 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useToast } from "../../../../context/ToastContext";
 import MemberForm from "../../../../components/MemberForm";
 import { MaterialIcons } from "@expo/vector-icons";
 import { validateMemberData } from "../../../../utils/validation";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomInput from '../../../../components/CustomInput';
+import GenderSelector from '../../../../components/GenderSelector';
 
-export default function AddMemberScreen() {
+export default function EditMemberScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
   const { showToast } = useToast();
 
   const [memberData, setMemberData] = useState({
-    name: "",
+    full_name: '',
+    relation: '',
+    age: '',
+    gender: '',
+    weight: '',
+    height: '',
+  });
+console.log("memberData ::", memberData);
+
+  const [errors, setErrors] = useState({
+    full_name: "",
     relation: "",
     age: "",
     gender: "",
@@ -27,14 +41,44 @@ export default function AddMemberScreen() {
     height: "",
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    relation: "",
-    age: "",
-    gender: "",
-    weight: "",
-    height: "",
-  });
+  useEffect(() => {
+    fetchMemberDetails();
+  }, [id]);
+
+  const fetchMemberDetails = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
+
+      // You'll need to implement an API endpoint to get single member details
+      // For now, we'll use the data from the list
+      const response = await fetch(`https://ecg-s6x7.onrender.com/api/adduser/getall-family-members`, {
+        headers: {
+          'Authorization': `${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      const member = data.data.find(m => m._id === id);
+      if (member) {
+        setMemberData({
+          full_name: member.full_name,
+          relation: member.relation,
+          age: member.age.toString(),
+          gender: member.gender,
+          weight: member.weight.toString(),
+          height: member.height.toString(),
+        });
+      }
+    } catch (error) {
+      showToast(error.message || 'Failed to fetch member details', 'error');
+    }
+  };
 
   const handleChangeData = (field, value) => {
     setMemberData((prev) => ({
@@ -50,16 +94,37 @@ export default function AddMemberScreen() {
     }));
   };
 
-  const handleAddMember = () => {
-    const { isValid, errors: validationErrors } =
-      validateMemberData(memberData);
+  const handleSubmit = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
 
-    if (isValid) {
-      // Add member logic here
-      showToast("Member updated successfully!", "success");
+      const response = await fetch(`https://ecg-s6x7.onrender.com/api/adduser/family-member-update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: memberData.full_name,
+          relation: memberData.relation,
+          age: memberData.age,
+          gender: memberData.gender,
+          weight: memberData.weight,
+          height: memberData.height,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      showToast('Member updated successfully!', 'success');
       router.back();
-    } else {
-      setErrors(validationErrors);
+    } catch (error) {
+      showToast(error.message || 'Failed to update member', 'error');
     }
   };
 
@@ -89,7 +154,7 @@ export default function AddMemberScreen() {
           errors={errors}
           onChangeData={handleChangeData}
           onClearError={handleClearError}
-          onSubmit={handleAddMember}
+          onSubmit={handleSubmit}
         />
       </ScrollView>
     </SafeAreaView>

@@ -13,85 +13,138 @@ import { useToast } from "../../../../context/ToastContext";
 import MemberForm from "../../../../components/MemberForm";
 import { MaterialIcons } from "@expo/vector-icons";
 import { validateMemberData } from "../../../../utils/validation";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomInput from '../../../../components/CustomInput';
+import GenderSelector from '../../../../components/GenderSelector';
 
 export default function AddMemberScreen() {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [memberData, setMemberData] = useState({
-    name: "",
-    relation: "",
-    age: "",
-    gender: "",
-    weight: "",
-    height: "",
+  const [formData, setFormData] = useState({
+    full_name: '',
+    relation: '',
+    age: '',
+    gender: '',
+    weight: '',
+    height: '',
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    relation: "",
-    age: "",
-    gender: "",
-    weight: "",
-    height: "",
-  });
+  const handleSubmit = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
 
-  const handleChangeData = (field, value) => {
-    setMemberData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+      const response = await fetch('https://ecg-s6x7.onrender.com/api/adduser/addMember', {
+        method: 'POST',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: formData.full_name,
+          relation: formData.relation,
+          age: formData.age,
+          gender: formData.gender,
+          weight: formData.weight,
+          height: formData.height,
+        }),
+      });
 
-  const handleClearError = (field) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: "",
-    }));
-  };
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
 
-  const handleAddMember = () => {
-    const { isValid, errors: validationErrors } =
-      validateMemberData(memberData);
-
-    if (isValid) {
-      // Add member logic here
-      showToast("Member added successfully!", "success");
+      showToast('Member added successfully!', 'success');
       router.back();
-    } else {
-      setErrors(validationErrors);
+    } catch (error) {
+      showToast(error.message || 'Failed to add member', 'error');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.title}>Add Member</Text>
+        <Text style={styles.title}>Add Family Member</Text>
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <MemberForm
-          memberData={memberData}
-          errors={errors}
-          onChangeData={handleChangeData}
-          onClearError={handleClearError}
-          onSubmit={handleAddMember}
-        />
+      <ScrollView style={styles.content}>
+        <View style={styles.form}>
+          <CustomInput
+            label="Full Name"
+            icon="person"
+            value={formData.full_name}
+            onChangeText={(text) => setFormData({ ...formData, full_name: text })}
+            required
+          />
+
+          <CustomInput
+            label="Relation"
+            icon="people"
+            value={formData.relation}
+            onChangeText={(text) => setFormData({ ...formData, relation: text })}
+            required
+          />
+
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Age"
+                icon="event"
+                value={formData.age}
+                onChangeText={(text) => setFormData({ ...formData, age: text })}
+                keyboardType="numeric"
+                suffix="yr(s)"
+                required
+              />
+            </View>
+            <View style={styles.halfInput}>
+              <GenderSelector
+                label="Gender"
+                value={formData.gender}
+                onChange={(value) => setFormData({ ...formData, gender: value })}
+                required
+              />
+            </View>
+          </View>
+
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Weight"
+                icon="fitness-center"
+                value={formData.weight}
+                onChangeText={(text) => setFormData({ ...formData, weight: text })}
+                keyboardType="numeric"
+                suffix="kg(s)"
+                required
+              />
+            </View>
+            <View style={styles.halfInput}>
+              <CustomInput
+                label="Height"
+                icon="height"
+                value={formData.height}
+                onChangeText={(text) => setFormData({ ...formData, height: text })}
+                keyboardType="numeric"
+                suffix="cm(s)"
+                required
+              />
+            </View>
+          </View>
+        </View>
       </ScrollView>
+
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Add Member</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -118,5 +171,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+  },
+  form: {
+    // Add appropriate styles for the form
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfInput: {
+    width: '48%',
+  },
+  submitButton: {
+    backgroundColor: '#074799',
+    padding: 16,
+    alignItems: 'center',
+    borderRadius: 8,
+    marginTop: 24,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
