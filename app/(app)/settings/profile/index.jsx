@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,20 +12,100 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomInput from "../../../components/CustomInput";
 import GenderSelector from "../../../components/GenderSelector";
+import { useToast } from "../../../context/ToastContext";
+import { useUser } from '../../../context/UserContext';
 
 export default function EditProfileScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
+  const { userData, setUserData, fetchUserProfile } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    fullName: "Rekha",
-    phone: "+911234567890",
-    email: "Rekha@gmail.com",
-    age: "28",
-    gender: "Male",
-    weight: "98",
-    height: "175",
+    full_name: "",
+    phoneNumber: "",
+    email: "",
+    age: "",
+    gender: "",
+    weight: "",
+    height: "",
   });
+
+  // Fetch profile data when component mounts
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const data = await fetchUserProfile();
+      if (data) {
+        setFormData({
+          full_name: data.full_name || '',
+          phoneNumber: data.phoneNumber || '',
+          email: data.email || '',
+          age: data.age?.toString() || '',
+          gender: data.gender || '',
+          weight: data.weight?.toString() || '',
+          height: data.height?.toString() || '',
+        });
+      }
+    } catch (error) {
+      showToast(error.message || "Error fetching profile", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
+
+      const response = await fetch('https://ecg-a7et.onrender.com/api/user/updateprofile', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: formData.full_name,
+          phoneNumber: formData.phoneNumber,
+          email: formData.email,
+          age: parseInt(formData.age),
+          gender: formData.gender,
+          weight: parseInt(formData.weight),
+          height: parseInt(formData.height),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update profile');
+      }
+
+      // Update context after successful profile update
+      await fetchUserProfile();
+      showToast("Profile updated successfully!", "success");
+      router.back();
+    } catch (error) {
+      showToast(error.message || "Error updating profile", "error");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,9 +143,9 @@ export default function EditProfileScreen() {
             <CustomInput
               label="Full Name"
               icon="person"
-              value={formData.fullName}
+              value={formData.full_name}
               onChangeText={(text) =>
-                setFormData({ ...formData, fullName: text })
+                setFormData({ ...formData, full_name: text })
               }
               required
             />
@@ -75,8 +155,8 @@ export default function EditProfileScreen() {
             <CustomInput
               icon="phone"
               label="Phone Number"
-              value={formData.phone}
-              onChangeText={(text) => setFormData({ ...formData, phone: text })}
+              value={formData.phoneNumber}
+              onChangeText={(text) => setFormData({ ...formData, phoneNumber: text })}
               keyboardType="phone-pad"
             />
           </View>
@@ -147,7 +227,7 @@ export default function EditProfileScreen() {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.saveButton}>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save Changes</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -225,5 +305,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

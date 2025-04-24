@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 // import { ROUTES } from "../../../navigation/routes";
 import LogoutDialog from "../../components/shared/LogoutDialog";
 import BottomNav from "../../components/shared/BottomNav";
+import { useUser } from '../../context/UserContext';
 
 const MENU_ITEMS = {
   profile: {
@@ -59,6 +60,11 @@ const MENU_ITEMS = {
 export default function SettingsScreen() {
   const router = useRouter();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { userData, fetchUserProfile } = useUser();
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   const handleMenuPress = (id) => {
     switch (id) {
@@ -165,8 +171,8 @@ export default function SettingsScreen() {
             style={styles.avatar}
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>rekha</Text>
-            <Text style={styles.profilePhone}>+911234567890</Text>
+            <Text style={styles.profileName}>{userData?.full_name || 'User'}</Text>
+            <Text style={styles.profilePhone}>{userData?.phoneNumber || ''}</Text>
           </View>
           <TouchableOpacity
             style={styles.editButton}
