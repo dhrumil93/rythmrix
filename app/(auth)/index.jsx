@@ -15,6 +15,7 @@ import SocialButton from "../components/SocialButton";
 import { useRouter } from "expo-router";
 import { useToast } from "../context/ToastContext";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true);
@@ -132,34 +133,102 @@ export default function AuthScreen() {
     return isValid;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (validateLoginForm()) {
-      showToast("Successfully logged in!", "success");
-      router.replace("/(app)/home");
+      try {
+        // Determine if input is email or phone
+        const isEmail = loginData.emailOrPhone.includes('@');
+        
+        const loginBody = {
+          // If email, send as email; if phone, send as phoneNumber
+          [isEmail ? 'email' : 'phoneNumber']: loginData.emailOrPhone,
+          password: loginData.password
+        };
+
+        const response = await fetch('https://ecg-a7et.onrender.com/api/user/signin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(loginBody),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        // Store the token
+        await AsyncStorage.setItem('userToken', data.token);
+        
+        showToast("Successfully logged in!", "success");
+        router.replace("/(app)/home");
+      } catch (error) {
+        showToast(error.message || "Login failed", "error");
+        setLoginErrors(prev => ({
+          ...prev,
+          emailOrPhone: error.message,
+          password: '',
+        }));
+      }
     }
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (validateSignupForm()) {
-      // Handle signup logic
-      showToast("Account created successfully!", "success");
-      setSignupData({
-        name: "",
-        phone: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
+      try {
+        const response = await fetch('https://ecg-a7et.onrender.com/api/user/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            full_name: signupData.name,        // Changed from name to full_name
+            email: signupData.email,
+            phoneNumber: signupData.phone,      // Changed from phone to phoneNumber
+            password: signupData.password,
+          }),
+        });
 
-      // Clear any previous error messages
-      setSignupErrors({
-        name: "",
-        phone: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
-      toggleAuth(true);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+
+        showToast("Account created successfully!", "success");
+        
+        // Clear form data
+        setSignupData({
+          name: "",
+          phone: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+
+        // Clear any previous error messages
+        setSignupErrors({
+          name: "",
+          phone: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+
+        // Switch to login view
+        toggleAuth(true);
+      } catch (error) {
+        showToast(error.message || "Registration failed", "error");
+        // Handle specific field errors
+        setSignupErrors(prev => ({
+          ...prev,
+          email: error.message.includes('email') ? error.message : '',
+          phone: error.message.includes('phone') ? error.message : '',
+          password: error.message.includes('password') ? error.message : '',
+        }));
+      }
     }
   };
 
