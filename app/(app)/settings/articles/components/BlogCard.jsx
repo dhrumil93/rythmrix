@@ -1,16 +1,32 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
+const BASE_URL = 'https://ecg-a7et.onrender.com/';
+
 export default function BlogCard({ blog }) {
+  // Construct the full image URL
+  const imageUrl = blog.photo ? `${BASE_URL}${blog.photo.replace(/\\/g, '/')}` : null;
+
   return (
     <TouchableOpacity style={styles.card}>
       <View style={styles.imageContainer}>
-        <Image source={blog.image} style={styles.image} />
+        {imageUrl ? (
+          <Image 
+            source={{ uri: imageUrl }} 
+            style={styles.image}
+            defaultSource={require('../../../../../assets/images/potassium.png')}
+          />
+        ) : (
+          <Image 
+            source={require('../../../../../assets/images/potassium.png')} 
+            style={styles.image}
+          />
+        )}
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{blog.title}</Text>
+        <Text style={styles.title}>{blog.blog_title}</Text>
         <Text style={styles.description}>{blog.description}</Text>
-        <Text style={styles.readTime}>{blog.readTime}</Text>
+        <Text style={styles.readTime}>{blog.read_time}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -44,6 +60,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 12,
     resizeMode: 'cover',
+    backgroundColor: '#f0f0f0',
   },
   content: {
     flex: 1,
