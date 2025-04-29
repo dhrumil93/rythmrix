@@ -1,62 +1,90 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNav from '../../../components/shared/BottomNav';
+
+const BASE_URL = 'https://ecg-wv62.onrender.com';
 
 const PlanDetailsScreen = () => {
   const [activeTab, setActiveTab] = useState('OVERVIEW');
+  const [plan, setPlan] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { title, type, duration, imageUrl } = params;
+  const { id } = params;
 
-  const scheduleData = [
-    {
-      week: 'Week 1',
-      description: 'Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.',
-    },
-    {
-      week: 'Week 2',
-      description: 'Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.',
-    },
-    {
-      week: 'Week 3',
-      description: 'Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.',
-    },
-    {
-      week: 'Week 4',
-      description: 'Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.',
-    },
-  ];
+  useEffect(() => {
+    fetchPlan();
+  }, [id]);
+
+  const fetchPlan = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
+      const response = await fetch(`${BASE_URL}/api/user/plan/getplan/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch plan');
+      }
+      const data = await response.json();
+      setPlan(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#074799" />
+      </View>
+    );
+  }
+
+  if (error || !plan) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ color: '#ff3b30', fontSize: 16 }}>{error || 'Plan not found'}</Text>
+      </View>
+    );
+  }
 
   const renderContent = () => {
     if (activeTab === 'OVERVIEW') {
       return (
         <View style={styles.content}>
-          <Text style={styles.description}>
-            Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.
-          </Text>
-
+          <Text style={styles.description}>{plan.description}</Text>
           <View style={styles.infoGrid}>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Duration</Text>
-              <Text style={styles.infoValue}>{duration} Days</Text>
+              <Text style={styles.infoValue}>{plan.duration_in_day} Days</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Times Per Week</Text>
-              <Text style={styles.infoValue}>Daily</Text>
+              <Text style={styles.infoValue}>{plan.times_per_week}</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Difficulty</Text>
-              <Text style={styles.infoValue}>Beginner</Text>
+              <Text style={styles.infoValue}>{plan.difficulty}</Text>
             </View>
           </View>
-
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>What You Will Do</Text>
-            <Text style={styles.sectionText}>
-              Lorem ipsum dolor sit amet consectetur. Urna in varius integer velit suspendisse et vitae diam.
-            </Text>
+            <Text style={styles.sectionTitle}>{plan.title2 || 'What You Will Do'}</Text>
+            <Text style={styles.sectionText}>{plan.description2}</Text>
           </View>
         </View>
       );
@@ -64,12 +92,16 @@ const PlanDetailsScreen = () => {
 
     return (
       <View style={styles.scheduleContent}>
-        {scheduleData.map((week, index) => (
-          <View key={index} style={styles.weekContainer}>
-            <Text style={styles.weekTitle}>{week.week}</Text>
-            <Text style={styles.weekDescription}>{week.description}</Text>
-          </View>
-        ))}
+        {plan.schedule && plan.schedule.length > 0 ? (
+          plan.schedule.map((week, index) => (
+            <View key={week._id || index} style={styles.weekContainer}>
+              <Text style={styles.weekTitle}>Week {week.weekNumber}</Text>
+              <Text style={styles.weekDescription}>{week.week_description}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>No schedule available.</Text>
+        )}
       </View>
     );
   };
@@ -92,12 +124,12 @@ const PlanDetailsScreen = () => {
       />
 
       <Image
-        source={{ uri: imageUrl }}
+        source={{ uri: plan.photo }}
         style={styles.headerImage}
       />
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.type}>{type}</Text>
-      <Text style={styles.duration}>{duration} Days</Text>
+      <Text style={styles.title}>{plan.title}</Text>
+      <Text style={styles.type}>{plan.categoty}</Text>
+      <Text style={styles.duration}>{plan.duration_in_day} Days</Text>
 
       <View style={styles.tabContainer}>
         <TouchableOpacity 

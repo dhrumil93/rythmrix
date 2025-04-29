@@ -31,18 +31,45 @@ export default function FeatureGrid() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch tests');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('API Response:', data); // Debug log
+      const rawResponse = await response.text();
+      // console.log('Raw API Response:', rawResponse);
 
-      // Transform the API data to match our feature card structure
-      const transformedFeatures = data.map(test => ({
+      let data;
+      try {
+        data = JSON.parse(rawResponse);
+        // Log the full structure
+        // console.log('Response structure:', JSON.stringify(data, null, 2));
+        // Log available keys in the object
+        // console.log('Available keys:', Object.keys(data));
+      } catch (parseError) {
+        throw new Error(`Failed to parse JSON response: ${parseError.message}`);
+      }
+
+      // Look for the tests array in common response structures
+      let testsArray;
+      if (data.tests) {
+        testsArray = data.tests;
+      } else if (data.data) {
+        testsArray = data.data;
+      } else if (data.result) {
+        testsArray = data.result;
+      } else {
+        throw new Error('Could not find tests array in response. Response structure: ' + 
+          JSON.stringify(Object.keys(data)));
+      }
+
+      if (!Array.isArray(testsArray)) {
+        throw new Error(`Tests data is not an array. Got type: ${typeof testsArray}`);
+      }
+
+      const transformedFeatures = testsArray.map(test => ({
         icon: test.photo ? { uri: `${BASE_URL}/${test.photo.replace(/\\/g, '/')}` } : require('../../../../assets/images/ecg.png'),
         title: test.name,
         description: test.description_name,
-        route: ROUTES.TESTS.TWELVE_LEAD_ECG, // You might want to map this based on test type
+        route: ROUTES.TESTS.TWELVE_LEAD_ECG,
         _id: test._id
       }));
 
@@ -111,4 +138,4 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-}); 
+});

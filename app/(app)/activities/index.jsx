@@ -1,85 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CalendarStrip from '../../components/Calendar/CalendarStrip';
 import FilterChips from '../../components/Plans/FilterChips';
 import PlanCard from '../../components/Plans/PlanCard';
 import BottomNav from '../../components/shared/BottomNav';
 
+const BASE_URL = 'https://ecg-wv62.onrender.com';
+
 const PlansScreen = () => {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState('Filter');
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  const allPlans = {
-    'Meal Plan': [
-      {
-        id: 1,
-        title: 'Ultimate High Protein',
-        duration: 28,
-        imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
-        type: 'Meal Plan',
-        isPremium: true,
-      },
-      {
-        id: 2,
-        title: 'Low Carb',
-        duration: 21,
-        imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
-        type: 'Meal Plan',
-        isPremium: true,
-      },
-      {
-        id: 3,
-        title: 'Beginner Meal Guide',
-        duration: 14,
-        imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
-        type: 'Meal Plan',
-        isPremium: false,
-      },
-    ],
-    'Meditation': [
-      {
-        id: 4,
-        title: 'Daily Mindfulness',
-        duration: 30,
-        imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597',
-        type: 'Meditation',
-        isPremium: true,
-      },
-      {
-        id: 5,
-        title: 'Stress Relief',
-        duration: 14,
-        imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597',
-        type: 'Meditation',
-        isPremium: false,
-      },
-    ],
-    'Exercises': [
-      {
-        id: 6,
-        title: 'Total Body Power',
-        duration: 28,
-        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b',
-        type: 'Exercises',
-        isPremium: true,
-      },
-      {
-        id: 7,
-        title: 'Beginner Workout',
-        duration: 21,
-        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b',
-        type: 'Exercises',
-        isPremium: false,
-      },
-    ],
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        router.replace('/(auth)');
+        return;
+      }
+
+      const response = await fetch(`${BASE_URL}/api/user/plan/getallplans`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch plans');
+      }
+
+      const rawResponse = await response.text();
+      // console.log('Raw API Response:', rawResponse); // Debug log
+
+      const data = JSON.parse(rawResponse);
+      // console.log('Parsed data:', data); // Debug log
+
+      // Handle different response structures
+      const plansArray = Array.isArray(data) ? data :
+                        data?.data ? data.data :
+                        data?.plans ? data.plans :
+                        data?.result ? data.result : [];
+
+      // console.log('Final plans array:', plansArray); // Debug log
+      setPlans(plansArray);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching plans:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getFilteredPlans = () => {
-    if (activeFilter === 'Filter') {
-      return Object.values(allPlans).flat();
+    // Ensure plans is an array
+    const safePlans = Array.isArray(plans) ? plans : [];
+    
+    if (!safePlans.length) {
+      return [];
     }
-    return allPlans[activeFilter] || [];
+
+    if (activeFilter === 'Filter') {
+      return safePlans;
+    }
+
+    return safePlans.filter(plan => plan?.categoty === activeFilter) || [];
   };
 
   const handleFilterChange = (filter) => {
@@ -87,35 +82,34 @@ const PlansScreen = () => {
   };
 
   const handlePlanPress = (plan) => {
-    if (plan.isPremium) {
-      Alert.alert(
-        "Premium Plan",
-        "This is a premium plan. Please upgrade to access this content.",
-        [
-          {
-            text: "Cancel",
-            style: "cancel"
-          },
-          {
-            text: "Upgrade",
-            onPress: () => router.push("/settings/subscription")
-          }
-        ]
-      );
-      return;
-    }
-    
-    // For free plans, navigate with plan data
     router.push({
-      pathname: `/activities/${plan.id}`,
+      pathname: `/activities/${plan._id}`,
       params: {
         title: plan.title,
-        type: plan.type,
-        duration: plan.duration,
-        imageUrl: plan.imageUrl
+        type: plan.categoty,
+        duration: plan.duration_in_day,
+        imageUrl: plan.photo,
+        description: plan.description,
+        schedule: plan.schedule
       }
     });
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#074799" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -131,7 +125,7 @@ const PlansScreen = () => {
       <View style={styles.content}>
         <Text style={styles.title}>Find a Plan</Text>
         <Text style={styles.description}>
-          Lorem ipsum dolor sit amet consectetur. Quis justo gravida nisi urna.
+          Choose from our curated selection of plans to achieve your health goals.
         </Text>
 
         <FilterChips 
@@ -149,9 +143,12 @@ const PlansScreen = () => {
       >
         {getFilteredPlans().map(plan => (
           <PlanCard
-            key={plan.id}
-            {...plan}
+            key={plan._id}
+            title={plan.title}
+            duration={plan.duration_in_day}
+            imageUrl={plan.photo}
             onPress={() => handlePlanPress(plan)}
+            isPremium={plan.isPremium}
           />
         ))}
       </ScrollView>
@@ -164,6 +161,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     padding: 20,
@@ -193,6 +194,12 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 20,
     marginBottom: 15,
+  },
+  errorText: {
+    color: '#ff3b30',
+    fontSize: 16,
+    textAlign: 'center',
+    padding: 20,
   },
 });
 
