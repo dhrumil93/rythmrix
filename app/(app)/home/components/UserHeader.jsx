@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,9 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const BASE_URL = "https://ecg-wv62.onrender.com";
 
 const getAvatarUrl = (username) => {
   const collections = [
@@ -20,15 +23,73 @@ const getAvatarUrl = (username) => {
     "micah",
     "adventurer",
   ];
-  const collection = collections[0]; // Using avataaars style
+  const collection = collections[0];
   return `https://api.dicebear.com/7.x/${collection}/png?seed=${username}&backgroundColor=b6e3f4`;
 };
 
-export default function UserHeader({ username = "rekha" }) {
+export default function UserHeader() {
   const router = useRouter();
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const slideAnim = useState(new Animated.Value(0))[0];
+  
+  // Add new states for user data and members
+  const [userData, setUserData] = useState(null);
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUserProfile();
+    fetchFamilyMembers();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const response = await fetch(`${BASE_URL}/api/user/getprofile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("User Profile:", data);
+        setUserData(data);
+      }
+    } catch (err) {
+      console.error('Error fetching user profile:', err);
+    }
+  };
+
+  const fetchFamilyMembers = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const response = await fetch(`${BASE_URL}/api/adduser/getall-family-members`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Family Members:", data);
+        setFamilyMembers(data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching family members:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleGuestMode = () => {
     setIsGuestMode(!isGuestMode);
@@ -55,7 +116,7 @@ export default function UserHeader({ username = "rekha" }) {
       <View style={styles.userInfo}>
         <TouchableOpacity onPress={handleEditProfile}>
           <Image
-            source={{ uri: getAvatarUrl(username) }}
+            source={{ uri: getAvatarUrl(userData?.full_name || 'user') }}
             style={styles.avatar}
             defaultSource={require("../../../../assets/images/default-avatar.png")}
           />
@@ -130,19 +191,43 @@ export default function UserHeader({ username = "rekha" }) {
           </View>
 
           <View style={styles.membersList}>
-            <TouchableOpacity style={styles.memberItem} onPress={handleEditProfile}>
-              <View style={styles.memberAvatar}>
-                <Image
-                  source={{ uri: getAvatarUrl(username) }}
-                  style={styles.memberAvatarImage}
-                />
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={12} color="#fff" />
+            {/* Main user profile */}
+            {userData && (
+              <TouchableOpacity style={styles.memberItem} onPress={handleEditProfile}>
+                <View style={styles.memberAvatar}>
+                  <Image
+                    source={{ uri: getAvatarUrl(userData.full_name) }}
+                    style={styles.memberAvatarImage}
+                  />
+                  <View style={styles.checkIcon}>
+                    <MaterialIcons name="check" size={12} color="#fff" />
+                  </View>
                 </View>
-              </View>
-              <Text style={styles.memberName}>Rekha</Text>
-            </TouchableOpacity>
+                <Text style={styles.memberName}>{userData.full_name}</Text>
+              </TouchableOpacity>
+            )}
 
+            {/* Family members */}
+            {familyMembers.map((member) => (
+              <TouchableOpacity 
+                key={member._id} 
+                style={styles.memberItem}
+                onPress={() => {
+                  // Handle member selection
+                  setModalVisible(false);
+                }}
+              >
+                <View style={styles.memberAvatar}>
+                  <Image
+                    source={{ uri: getAvatarUrl(member.full_name) }}
+                    style={[styles.memberAvatarImage, { borderColor: '#ccc' }]}
+                  />
+                </View>
+                <Text style={[styles.memberName, { color: '#333' }]}>{member.full_name}</Text>
+              </TouchableOpacity>
+            ))}
+
+            {/* Add New Member button */}
             <TouchableOpacity style={styles.addNewMember} onPress={handleAddMember}>
               <View style={styles.addIcon}>
                 <MaterialIcons name="add" size={24} color="#074799" />

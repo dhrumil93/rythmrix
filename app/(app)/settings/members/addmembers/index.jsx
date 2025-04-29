@@ -38,7 +38,7 @@ export default function AddMemberScreen() {
         return;
       }
 
-      const response = await fetch('https://ecg-s6x7.onrender.com/api/adduser/addMember', {
+      const response = await fetch('https://ecg-wv62.onrender.com/api/adduser/addMember', {
         method: 'POST',
         headers: {
           'Authorization': `${token}`,

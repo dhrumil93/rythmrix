@@ -1,56 +1,88 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FeatureCard from './FeatureCard';
 import { ROUTES } from '../../../../navigation/routes';
 
-const FEATURES = [
-  {
-    icon: require('../../../../assets/images/ecg.png'),
-    title: '12 Lead ECG',
-    description: 'Comprehensive heart analysis from 12 angles',
-    route: ROUTES.TESTS.TWELVE_LEAD_ECG
-  },
-  {
-    icon: require('../../../../assets/images/heart.png'),
-    title: 'Heart Risk Calculator',
-    description: 'Heart risk assessment made easy',
-    route: ROUTES.TESTS.HEART_RISK
-  },
-  {
-    icon: require('../../../../assets/images/bike.png'),
-    title: 'HRV',
-    description: 'Instant stress level readings',
-    route: ROUTES.TESTS.HRV
-  },
-  {
-    icon: require('../../../../assets/images/monitor.png'),
-    title: 'Live Monitor',
-    description: 'Continuous, round-the-clock heart monitoring',
-    route: ROUTES.TESTS.LIVE_MONITOR
-  },
-  {
-    icon: require('../../../../assets/images/lead2.png'),
-    title: 'Lead II ECG',
-    description: 'Your go-to solution for basic arrhythmia tests',
-    route: ROUTES.TESTS.LEAD_TWO_ECG
-  },
-  {
-    icon: require('../../../../assets/images/potassium.png'),
-    title: 'Hyperkalemia',
-    description: 'Quick potassium level checks',
-    route: ROUTES.TESTS.HYPERKALEMIA
-  }
-];
+const BASE_URL = 'https://ecg-wv62.onrender.com';
 
 export default function FeatureGrid() {
+  const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchFeatures();
+  }, []);
+
+  const fetchFeatures = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
+      const response = await fetch(`${BASE_URL}/api/user/test/getalltest`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch tests');
+      }
+
+      const data = await response.json();
+      console.log('API Response:', data); // Debug log
+
+      // Transform the API data to match our feature card structure
+      const transformedFeatures = data.map(test => ({
+        icon: test.photo ? { uri: `${BASE_URL}/${test.photo.replace(/\\/g, '/')}` } : require('../../../../assets/images/ecg.png'),
+        title: test.name,
+        description: test.description_name,
+        route: ROUTES.TESTS.TWELVE_LEAD_ECG, // You might want to map this based on test type
+        _id: test._id
+      }));
+
+      setFeatures(transformedFeatures);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching tests:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.featuresGrid, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.featuresGrid, styles.centerContent]}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.featuresGrid}>
-      {FEATURES.map((feature, index) => (
-        <FeatureCard
-          key={index}
-          {...feature}
-        />
-      ))}
+      {features.length === 0 ? (
+        <Text style={styles.noFeaturesText}>No tests available</Text>
+      ) : (
+        features.map((feature) => (
+          <FeatureCard
+            key={feature._id}
+            {...feature}
+          />
+        ))
+      )}
     </View>
   );
 }
@@ -61,5 +93,22 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     padding: 10,
     justifyContent: 'space-between',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200, // Add some minimum height for better visibility
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  noFeaturesText: {
+    color: '#666',
+    fontSize: 16,
+    textAlign: 'center',
+    width: '100%',
+    marginTop: 20,
   },
 }); 

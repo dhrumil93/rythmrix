@@ -31,7 +31,7 @@ export default function MembersScreen() {
         return;
       }
 
-      const response = await fetch('https://ecg-s6x7.onrender.com/api/adduser/getall-family-members', {
+      const response = await fetch('https://ecg-wv62.onrender.com/api/adduser/getall-family-members', {
         method: 'GET',
         headers: {
           'Authorization': `${token}`,

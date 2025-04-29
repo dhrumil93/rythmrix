@@ -1,10 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BASE_URL = 'https://ecg-wv62.onrender.com';
 
 export default function TermsScreen() {
   const router = useRouter();
+  const [terms, setTerms] = useState([]);
+
+  useEffect(() => {
+    fetchTerms();
+  }, []);
+
+  const fetchTerms = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/api/user/termscondition/getAll`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Terms Response:', data);
+        // Using the correct key from the API response
+        setTerms(data.gettermscondition || []);
+      }
+    } catch (err) {
+      console.error('Error fetching terms:', err);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,14 +63,18 @@ export default function TermsScreen() {
       >
         <Text style={styles.lastUpdated}>Last updated: March 15, 2024</Text>
         
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>1. Acceptance of Terms</Text>
-          <Text style={styles.text}>
-            By accessing and using this application, you accept and agree to be bound by the terms and provision of this agreement...
-          </Text>
-        </View>
+        {terms.map((term, index) => (
+          <View key={term._id} style={styles.section}>
+            <Text style={styles.sectionTitle}>{index + 1}. {term.title}</Text>
+            <Text style={styles.text}>{term.description}</Text>
+          </View>
+        ))}
 
-        {/* Add more sections as needed */}
+        {terms.length === 0 && (
+          <View style={styles.section}>
+            <Text style={styles.text}>No terms and conditions available.</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

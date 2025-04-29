@@ -55,7 +55,7 @@ console.log("memberData ::", memberData);
 
       // You'll need to implement an API endpoint to get single member details
       // For now, we'll use the data from the list
-      const response = await fetch(`https://ecg-s6x7.onrender.com/api/adduser/getall-family-members`, {
+      const response = await fetch(`https://ecg-wv62.onrender.com/api/adduser/getall-family-members`, {
         headers: {
           'Authorization': `${token}`,
         },
@@ -102,7 +102,7 @@ console.log("memberData ::", memberData);
         return;
       }
 
-      const response = await fetch(`https://ecg-s6x7.onrender.com/api/adduser/family-member-update/${id}`, {
+      const response = await fetch(`https://ecg-wv62.onrender.com/api/adduser/family-member-update/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `${token}`,

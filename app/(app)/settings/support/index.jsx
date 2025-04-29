@@ -1,51 +1,50 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Modal from 'react-native-modal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HELP_TOPICS = [
-  {
-    id: '1',
-    question: 'Whatsteps should take if I can not connect the device even after several attempts?',
-    answer: 'First, ensure Bluetooth is enabled on your device. Check if the device is properly charged. Try restarting both your phone and the ECG device. If issues persist, try forgetting the device from Bluetooth settings and pair again.'
-  },
-  {
-    id: '2',
-    question: 'I have properly connected the device but I am experiencing straight-linee issues. How can I resolve this?',
-    answer: 'This usually occurs due to improper contact. Ensure the electrodes are clean and making proper skin contact. Try moistening the contact points slightly. Check if the device is properly positioned.'
-  },
-  {
-    id: '3',
-    question: 'Despite following all the guidelines in the user manual, the traces are not generating accurately. What can I do',
-    answer: 'Check if you are in a stable position without movement. Ensure proper skin contact and electrode placement. Try recalibrating the device. If problems persist, contact support for detailed troubleshooting.'
-  },
-  {
-    id: '4',
-    question: 'The test is returning blank readings. How can I address this?',
-    answer: 'First check the battery level of your device. Clean the electrodes and ensure proper skin contact. If the issue continues, try resetting the device and reconnecting.'
-  },
-  {
-    id: '5',
-    question: 'I am noticing some noise in the ECG signal generated from the device. How can I address this?',
-    answer: 'Ensure you are in a quiet environment away from electronic interference. Keep still during recording. Check electrode placement and contact. Try moving away from power sources or other electronic devices.'
-  },
-  {
-    id: '6',
-    question: 'Is the device compatible with iOS, and if not, when can we anticipate an update?',
-    answer: 'Currently, the device is compatible with both iOS and Android platforms. Regular updates are provided through the App Store and Play Store.'
-  },
-  {
-    id: '7',
-    question: 'Is it necessary to enable the OTG connection for every test?',
-    answer: 'No, OTG connection is not required. The device uses Bluetooth technology for communication with your smartphone.'
-  }
-];
+const BASE_URL = 'https://ecg-wv62.onrender.com';
 
 export default function SupportScreen() {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [helpTopics, setHelpTopics] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHelpTopics();
+  }, []);
+
+  const fetchHelpTopics = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        return; // If no token, use default static data
+      }
+
+      const response = await fetch(`${BASE_URL}/api/user/help/getAll`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.gethelp && Array.isArray(data.gethelp)) {
+          setHelpTopics(data.gethelp);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching help topics:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -54,6 +53,14 @@ export default function SupportScreen() {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#074799" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,21 +82,21 @@ export default function SupportScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-        {HELP_TOPICS.map((topic) => (
+        {helpTopics.map((topic) => (
           <TouchableOpacity
-            key={topic.id}
+            key={topic._id}
             style={styles.topicCard}
-            onPress={() => toggleExpand(topic.id)}
+            onPress={() => toggleExpand(topic._id)}
           >
             <View style={styles.questionRow}>
               <Text style={styles.question}>{topic.question}</Text>
               <MaterialIcons 
-                name={expandedId === topic.id ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
+                name={expandedId === topic._id ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
                 size={24} 
                 color="#666" 
               />
             </View>
-            {expandedId === topic.id && (
+            {expandedId === topic._id && (
               <Text style={styles.answer}>{topic.answer}</Text>
             )}
           </TouchableOpacity>
