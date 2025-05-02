@@ -12,23 +12,45 @@ import { useRouter } from "expo-router";
 import { useToast } from "../../../../context/ToastContext";
 import MemberForm from "../../../../components/MemberForm";
 import { MaterialIcons } from "@expo/vector-icons";
-import { validateMemberData } from "../../../../utils/validation";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomInput from '../../../../components/CustomInput';
-import GenderSelector from '../../../../components/GenderSelector';
 
 export default function AddMemberScreen() {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [formData, setFormData] = useState({
+  const [memberData, setMemberData] = useState({
     full_name: '',
+    email: '',
     relation: '',
     age: '',
     gender: '',
     weight: '',
     height: '',
   });
+
+  const [errors, setErrors] = useState({
+    full_name: '',
+    email: '',
+    relation: '',
+    age: '',
+    gender: '',
+    weight: '',
+    height: '',
+  });
+
+  const handleChangeData = (field, value) => {
+    setMemberData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleClearError = (field) => {
+    setErrors(prev => ({
+      ...prev,
+      [field]: ''
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -44,14 +66,7 @@ export default function AddMemberScreen() {
           'Authorization': `${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          full_name: formData.full_name,
-          relation: formData.relation,
-          age: formData.age,
-          gender: formData.gender,
-          weight: formData.weight,
-          height: formData.height,
-        }),
+        body: JSON.stringify(memberData),
       });
 
       const data = await response.json();
@@ -66,85 +81,29 @@ export default function AddMemberScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.title}>Add Family Member</Text>
+        <Text style={styles.title}>Add New Member</Text>
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.form}>
-          <CustomInput
-            label="Full Name"
-            icon="person"
-            value={formData.full_name}
-            onChangeText={(text) => setFormData({ ...formData, full_name: text })}
-            required
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.formContainer}>
+          <MemberForm
+            memberData={memberData}
+            errors={errors}
+            onChangeData={handleChangeData}
+            onClearError={handleClearError}
+            onSubmit={handleSubmit}
           />
-
-          <CustomInput
-            label="Relation"
-            icon="people"
-            value={formData.relation}
-            onChangeText={(text) => setFormData({ ...formData, relation: text })}
-            required
-          />
-
-          <View style={styles.row}>
-            <View style={styles.halfInput}>
-              <CustomInput
-                label="Age"
-                icon="event"
-                value={formData.age}
-                onChangeText={(text) => setFormData({ ...formData, age: text })}
-                keyboardType="numeric"
-                suffix="yr(s)"
-                required
-              />
-            </View>
-            <View style={styles.halfInput}>
-              <GenderSelector
-                label="Gender"
-                value={formData.gender}
-                onChange={(value) => setFormData({ ...formData, gender: value })}
-                required
-              />
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            <View style={styles.halfInput}>
-              <CustomInput
-                label="Weight"
-                icon="fitness-center"
-                value={formData.weight}
-                onChangeText={(text) => setFormData({ ...formData, weight: text })}
-                keyboardType="numeric"
-                suffix="kg(s)"
-                required
-              />
-            </View>
-            <View style={styles.halfInput}>
-              <CustomInput
-                label="Height"
-                icon="height"
-                value={formData.height}
-                onChangeText={(text) => setFormData({ ...formData, height: text })}
-                keyboardType="numeric"
-                suffix="cm(s)"
-                required
-              />
-            </View>
-          </View>
         </View>
       </ScrollView>
-
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Add Member</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -152,46 +111,34 @@ export default function AddMemberScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     paddingTop: StatusBar.currentHeight || 40,
-  },
-  scrollContent: {
-    paddingHorizontal: 24,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
+    padding: 16,
     backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
   },
   backButton: {
     marginRight: 16,
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#333",
   },
-  form: {
-    // Add appropriate styles for the form
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  halfInput: {
-    width: '48%',
-  },
-  submitButton: {
-    backgroundColor: '#074799',
+  content: {
     padding: 16,
-    alignItems: 'center',
-    borderRadius: 8,
-    marginTop: 24,
+    paddingBottom: 2,
   },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
+  },
+  formContainer: {
+    flex: 1,
   },
 });

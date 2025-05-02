@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,11 @@ import {
   StatusBar,
   TouchableOpacity,
   ScrollView,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useToast } from '../../../context/ToastContext';
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast } from "../../../context/ToastContext";
 
 export default function MembersScreen() {
   const router = useRouter();
@@ -25,26 +25,29 @@ export default function MembersScreen() {
 
   const fetchMembers = async () => {
     try {
-      const token = await AsyncStorage.getItem('userToken');
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        router.replace('/(auth)');
+        router.replace("/(auth)");
         return;
       }
 
-      const response = await fetch('https://ecg-wv62.onrender.com/api/adduser/getall-family-members', {
-        method: 'GET',
-        headers: {
-          'Authorization': `${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        "https://ecg-wv62.onrender.com/api/adduser/getall-family-members",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
-      
+
       setMembers(data.data || []);
     } catch (error) {
-      showToast(error.message || 'Failed to fetch members', 'error');
+      showToast(error.message || "Failed to fetch members", "error");
     } finally {
       setIsLoading(false);
     }
@@ -52,22 +55,25 @@ export default function MembersScreen() {
 
   const handleEditMember = (memberId) => {
     router.push({
-      pathname: '/settings/members/editmembers',
-      params: { id: memberId }
+      pathname: "/settings/members/editmembers",
+      params: { id: memberId },
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-      
+
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.title}>Family Members</Text>
-        <TouchableOpacity 
-          onPress={() => router.push('/settings/members/addmembers')}
+        <TouchableOpacity
+          onPress={() => router.push("/settings/members/addmembers")}
           style={styles.addButton}
         >
           <MaterialIcons name="add" size={24} color="#074799" />
@@ -109,7 +115,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: StatusBar.currentHeight,
   },
   header: {
     flexDirection: 'row',
@@ -117,24 +122,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   backButton: {
     padding: 8,
+    borderRadius: 8,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   addButton: {
     padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#f0f7ff',
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
+    paddingBottom: 32,
   },
   centerContent: {
-    flex: 1,
+    minHeight: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 40,
@@ -142,6 +153,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: '#666',
     fontSize: 16,
+    textAlign: 'center',
   },
   memberCard: {
     flexDirection: 'row',
@@ -149,13 +161,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   memberName: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: '600',
+    color: '#1a1a1a',
     marginBottom: 4,
   },
   memberDetails: {

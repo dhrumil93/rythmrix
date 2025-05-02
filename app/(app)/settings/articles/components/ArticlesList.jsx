@@ -33,7 +33,7 @@ export default function ArticlesList({ type }) {
           throw new Error('Authentication token not found');
         }
 
-        const response = await fetch('https://ecg-a7et.onrender.com/api/user/article/getAllArticles', {
+        const response = await fetch('https://ecg-wv62.onrender.com/api/user/article/getAllArticles', {
           method: 'GET',
           headers: {
             'Authorization': `${token}`,
