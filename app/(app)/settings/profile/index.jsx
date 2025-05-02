@@ -67,7 +67,7 @@ export default function EditProfileScreen() {
         return;
       }
 
-      const response = await fetch('https://ecg-a7et.onrender.com/api/user/updateprofile', {
+      const response = await fetch('https://ecg-wv62.onrender.com/api/user/updateprofile', {
         method: 'PUT',
         headers: {
           'Authorization': `${token}`,

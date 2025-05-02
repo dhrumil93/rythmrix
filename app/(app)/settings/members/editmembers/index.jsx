@@ -111,6 +111,7 @@ console.log("memberData ::", memberData);
         body: JSON.stringify({
           full_name: memberData.full_name,
           relation: memberData.relation,
+          email: memberData.email,
           age: memberData.age,
           gender: memberData.gender,
           weight: memberData.weight,
@@ -130,11 +131,7 @@ console.log("memberData ::", memberData);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -144,18 +141,16 @@ console.log("memberData ::", memberData);
         </TouchableOpacity>
         <Text style={styles.title}>Edit Member</Text>
       </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <MemberForm
-          memberData={memberData}
-          errors={errors}
-          onChangeData={handleChangeData}
-          onClearError={handleClearError}
-          onSubmit={handleSubmit}
-        />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.formContainer}>
+          <MemberForm
+            memberData={memberData}
+            errors={errors}
+            onChangeData={handleChangeData}
+            onClearError={handleClearError}
+            onSubmit={handleSubmit}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -164,11 +159,11 @@ console.log("memberData ::", memberData);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: StatusBar.currentHeight || 40,
+    backgroundColor: '#fff',
   },
   scrollContent: {
-    paddingHorizontal: 24,
+    flexGrow: 1,
+    padding: 16,
   },
   header: {
     flexDirection: "row",
