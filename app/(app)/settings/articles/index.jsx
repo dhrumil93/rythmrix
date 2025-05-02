@@ -18,13 +18,13 @@ export default function ArticlesScreen() {
   // Handle Swipe Gestures
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_, gestureState) =>
-      Math.abs(gestureState.dx) > 20, // Detect horizontal swipe
+      Math.abs(gestureState.dx) > 20, 
     onPanResponderRelease: (_, gestureState) => {
       if (gestureState.dx < -50 && activeTab === "blogs") {
-        // Swipe left -> Go to "Tutorials"
+      
         setActiveTab("tutorials");
       } else if (gestureState.dx > 50 && activeTab === "tutorials") {
-        // Swipe right -> Go to "Blogs"
+        
         setActiveTab("blogs");
       }
     },

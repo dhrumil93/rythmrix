@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const BASE_URL = 'https://ecg-a7et.onrender.com/';
+const BASE_URL = 'https://ecg-wv62.onrender.com/';
 
 export default function BlogCard({ blog }) {
   // Construct the full image URL
