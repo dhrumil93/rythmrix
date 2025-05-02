@@ -145,7 +145,7 @@ export default function AuthScreen() {
           password: loginData.password
         };
 
-        const response = await fetch('https://ecg-a7et.onrender.com/api/user/signin', {
+        const response = await fetch('https://ecg-wv62.onrender.com/api/user/signin', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -178,15 +178,15 @@ export default function AuthScreen() {
   const handleSignup = async () => {
     if (validateSignupForm()) {
       try {
-        const response = await fetch('https://ecg-a7et.onrender.com/api/user/signup', {
+        const response = await fetch('https://ecg-wv62.onrender.com/api/user/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            full_name: signupData.name,        // Changed from name to full_name
+            full_name: signupData.name,        
             email: signupData.email,
-            phoneNumber: signupData.phone,      // Changed from phone to phoneNumber
+            phoneNumber: signupData.phone,      
             password: signupData.password,
           }),
         });

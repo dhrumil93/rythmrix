@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return null;
 
-      const response = await fetch('https://ecg-a7et.onrender.com/api/user/getprofile', {
+      const response = await fetch('https://ecg-wv62.onrender.com/api/user/getprofile', {
         method: 'GET',
         headers: {
           'Authorization': `${token}`,
