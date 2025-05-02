@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
+  ScrollView,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useActiveUser } from '../../../context/ActiveUserContext';
 
 const BASE_URL = "https://ecg-wv62.onrender.com";
 
@@ -29,19 +31,28 @@ const getAvatarUrl = (username) => {
 
 export default function UserHeader() {
   const router = useRouter();
+  // const { activeUser, updateActiveUser } = useActiveUser();
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const slideAnim = useState(new Animated.Value(0))[0];
   
-  // Add new states for user data and members
   const [userData, setUserData] = useState(null);
   const [familyMembers, setFamilyMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeUser, setActiveUser] = useState(null);
 
   useEffect(() => {
     fetchUserProfile();
     fetchFamilyMembers();
+    initializeActiveUser();
   }, []);
+
+  useEffect(() => {
+    if (!activeUser && userData) {
+      setActiveUser(userData);
+      updateActiveUser(userData);
+    }
+  }, [userData]);
 
   const fetchUserProfile = async () => {
     try {
@@ -91,6 +102,17 @@ export default function UserHeader() {
     }
   };
 
+  const initializeActiveUser = async () => {
+    try {
+      const storedActiveUser = await AsyncStorage.getItem('activeUser');
+      if (storedActiveUser) {
+        setActiveUser(JSON.parse(storedActiveUser));
+      }
+    } catch (error) {
+      console.error('Error loading active user:', error);
+    }
+  };
+
   const toggleGuestMode = () => {
     setIsGuestMode(!isGuestMode);
     Animated.spring(slideAnim, {
@@ -99,6 +121,16 @@ export default function UserHeader() {
       speed: 12,
       bounciness: 8,
     }).start();
+  };
+
+  const handleSelectMember = async (selected) => {
+    try {
+      await AsyncStorage.setItem('activeUser', JSON.stringify(selected));
+      setActiveUser(selected);
+      setModalVisible(false);
+    } catch (error) {
+      console.error('Error updating active user:', error);
+    }
   };
 
   const handleAddMember = () => {
@@ -116,7 +148,7 @@ export default function UserHeader() {
       <View style={styles.userInfo}>
         <TouchableOpacity onPress={handleEditProfile}>
           <Image
-            source={{ uri: getAvatarUrl(userData?.full_name || 'user') }}
+            source={{ uri: getAvatarUrl(activeUser?.full_name || 'user') }}
             style={styles.avatar}
             defaultSource={require("../../../../assets/images/default-avatar.png")}
           />
@@ -190,51 +222,80 @@ export default function UserHeader() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.membersList}>
-            {/* Main user profile */}
-            {userData && (
-              <TouchableOpacity style={styles.memberItem} onPress={handleEditProfile}>
-                <View style={styles.memberAvatar}>
-                  <Image
-                    source={{ uri: getAvatarUrl(userData.full_name) }}
-                    style={styles.memberAvatarImage}
-                  />
-                  <View style={styles.checkIcon}>
-                    <MaterialIcons name="check" size={12} color="#fff" />
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.membersScrollContent}
+          >
+            <View style={styles.membersList}>
+              {/* Main user profile */}
+              {userData && (
+                <TouchableOpacity 
+                  style={styles.memberItem} 
+                  onPress={() => handleSelectMember(userData)}
+                >
+                  <View style={styles.memberAvatar}>
+                    <Image
+                      source={{ uri: getAvatarUrl(userData.full_name) }}
+                      style={[
+                        styles.memberAvatarImage,
+                        { borderColor: activeUser?._id === userData._id ? '#00FF00' : '#ccc' }
+                      ]}
+                    />
+                    {activeUser?._id === userData._id && (
+                      <View style={styles.checkIcon}>
+                        <MaterialIcons name="check" size={12} color="#fff" />
+                      </View>
+                    )}
                   </View>
-                </View>
-                <Text style={styles.memberName}>{userData.full_name}</Text>
-              </TouchableOpacity>
-            )}
+                  <Text style={[
+                    styles.memberName,
+                    { color: activeUser?._id === userData._id ? '#074799' : '#333' }
+                  ]}>
+                    {userData.full_name}
+                  </Text>
+                </TouchableOpacity>
+              )}
 
-            {/* Family members */}
-            {familyMembers.map((member) => (
-              <TouchableOpacity 
-                key={member._id} 
-                style={styles.memberItem}
-                onPress={() => {
-                  // Handle member selection
-                  setModalVisible(false);
-                }}
-              >
-                <View style={styles.memberAvatar}>
-                  <Image
-                    source={{ uri: getAvatarUrl(member.full_name) }}
-                    style={[styles.memberAvatarImage, { borderColor: '#ccc' }]}
-                  />
-                </View>
-                <Text style={[styles.memberName, { color: '#333' }]}>{member.full_name}</Text>
-              </TouchableOpacity>
-            ))}
+              {/* Family members */}
+              {familyMembers.map((member) => (
+                <TouchableOpacity 
+                  key={member._id} 
+                  style={styles.memberItem}
+                  onPress={() => handleSelectMember(member)}
+                >
+                  <View style={styles.memberAvatar}>
+                    <Image
+                      source={{ uri: getAvatarUrl(member.full_name) }}
+                      style={[
+                        styles.memberAvatarImage,
+                        { borderColor: activeUser?._id === member._id ? '#00FF00' : '#ccc' }
+                      ]}
+                    />
+                    {activeUser?._id === member._id && (
+                      <View style={styles.checkIcon}>
+                        <MaterialIcons name="check" size={12} color="#fff" />
+                      </View>
+                    )}
+                  </View>
+                  <Text style={[
+                    styles.memberName,
+                    { color: activeUser?._id === member._id ? '#074799' : '#333' }
+                  ]}>
+                    {member.full_name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
 
-            {/* Add New Member button */}
-            <TouchableOpacity style={styles.addNewMember} onPress={handleAddMember}>
-              <View style={styles.addIcon}>
-                <MaterialIcons name="add" size={24} color="#074799" />
-              </View>
-              <Text style={styles.addNewText}>Add New</Text>
-            </TouchableOpacity>
-          </View>
+              {/* Add New Member button */}
+              <TouchableOpacity style={styles.addNewMember} onPress={handleAddMember}>
+                <View style={styles.addIcon}>
+                  <MaterialIcons name="add" size={24} color="#074799" />
+                </View>
+                <Text style={styles.addNewText}>Add New</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
@@ -366,5 +427,8 @@ const styles = StyleSheet.create({
   addNewText: {
     fontSize: 16,
     color: '#333',
+  },
+  membersScrollContent: {
+    paddingHorizontal: 20,
   },
 });
